@@ -41,7 +41,7 @@ const registration = {
         let isUnique = false;
         
         while (!isUnique) {
-            code = Math.floor(100000 + Math.random() * 900000).toString();
+            code = Math.floor(1000 + Math.random() * 9000).toString();
             isUnique = !athletes.some(a => a.unique_code === code);
         }
         return code;
