@@ -7,9 +7,10 @@ const app = {
     init() {
         this.bindEvents();
         
-        // Detect /start route
+        // Detect /start route (support both path and hash routing)
         const path = window.location.pathname;
-        if (path.endsWith('/start')) {
+        const hash = window.location.hash;
+        if (path.endsWith('/start') || hash === '#/start') {
             this.currentRoute = 'start';
         } else {
             this.currentRoute = 'main';
