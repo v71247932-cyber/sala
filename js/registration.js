@@ -39,7 +39,7 @@ const registration = {
         const athletes = storage.getAthletes();
         let code;
         let isUnique = false;
-        
+
         while (!isUnique) {
             code = Math.floor(1000 + Math.random() * 9000).toString();
             isUnique = !athletes.some(a => a.unique_code === code);
@@ -55,7 +55,7 @@ const registration = {
         }
 
         const uniqueCode = this.generateUniqueCode();
-        
+
         const athleteData = {
             unique_code: uniqueCode,
             password: password,
@@ -75,11 +75,11 @@ const registration = {
         };
 
         storage.addAthlete(athleteData);
-        
+
         // Success flow
         document.getElementById('display-unique-code').innerText = uniqueCode;
         document.getElementById('success-modal').classList.remove('hidden');
-        
+
         document.getElementById('registration-form').reset();
         document.getElementById('guardian-info').classList.add('hidden');
     },
@@ -111,11 +111,11 @@ const registration = {
         // Success flow
         document.getElementById('display-unique-code').innerText = uniqueCode;
         document.getElementById('success-modal').classList.remove('hidden');
-        
+
         // Auto-login
         app.isAdmin = false;
         app.autoLogin(athleteData);
-        
+
         document.getElementById('public-signup-form').reset();
     }
 };
