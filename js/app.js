@@ -7,6 +7,14 @@ const app = {
     init() {
         this.bindEvents();
         
+        // Detect /start route
+        const path = window.location.pathname;
+        if (path.endsWith('/start')) {
+            this.currentRoute = 'start';
+        } else {
+            this.currentRoute = 'main';
+        }
+
         // Check for persistent session
         const session = storage.getSession();
         if (session) {
@@ -16,17 +24,20 @@ const app = {
         }
 
         this.updateView();
-        console.log('App initialized');
+        console.log('App initialized on route:', this.currentRoute);
     },
 
     updateView() {
         const authScreen = document.getElementById('auth-screen');
+        const startScreen = document.getElementById('start-screen');
         const mainApp = document.getElementById('main-app');
         const navReg = document.getElementById('nav-registration-link');
         const navEvents = document.getElementById('nav-events-link');
 
+        // Reset visibility
+        [authScreen, startScreen, mainApp].forEach(s => s?.classList.add('hidden'));
+
         if (this.isLoggedIn) {
-            authScreen.classList.add('hidden');
             mainApp.classList.remove('hidden');
             
             // Role based navigation
@@ -40,8 +51,11 @@ const app = {
             
             this.showSection('dashboard');
         } else {
-            authScreen.classList.remove('hidden');
-            mainApp.classList.add('hidden');
+            if (this.currentRoute === 'start') {
+                startScreen.classList.remove('hidden');
+            } else {
+                authScreen.classList.remove('hidden');
+            }
         }
     },
 
@@ -75,11 +89,8 @@ const app = {
         const pass = document.getElementById('login-pass').value;
 
         if (email === 'admin@admin.ro' && pass === 'oijoij') {
-            this.isLoggedIn = true;
             this.isAdmin = true;
-            this.currentUser = { name: 'Administrator' };
-            storage.saveSession(this.currentUser, this.isAdmin);
-            this.updateView();
+            this.autoLogin({ name: 'Administrator' });
             return;
         }
 
@@ -87,14 +98,31 @@ const app = {
         const athlete = athletes.find(a => a.email === email && a.password === pass);
 
         if (athlete) {
-            this.isLoggedIn = true;
             this.isAdmin = false;
-            this.currentUser = athlete;
-            storage.saveSession(this.currentUser, this.isAdmin);
-            this.updateView();
+            this.autoLogin(athlete);
         } else {
             alert('Email sau parolă incorectă!');
         }
+    },
+
+    handleStartLogin() {
+        const code = document.getElementById('start-id').value;
+        const athletes = storage.getAthletes();
+        const athlete = athletes.find(a => a.unique_code === code);
+
+        if (athlete) {
+            this.isAdmin = false;
+            this.autoLogin(athlete);
+        } else {
+            alert('Cod incorect! Te rugăm să verifici codul primit la înregistrare.');
+        }
+    },
+
+    autoLogin(user) {
+        this.isLoggedIn = true;
+        this.currentUser = user;
+        storage.saveSession(this.currentUser, this.isAdmin);
+        this.updateView();
     },
 
     logout() {
@@ -102,6 +130,7 @@ const app = {
         this.isAdmin = false;
         this.currentUser = null;
         storage.clearSession();
+        // Return to the route they were on
         this.updateView();
     },
 

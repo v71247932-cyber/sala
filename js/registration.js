@@ -86,11 +86,7 @@ const registration = {
 
     closeSuccess() {
         document.getElementById('success-modal').classList.add('hidden');
-        if (app.isLoggedIn) {
-            app.showSection('dashboard');
-        } else {
-            app.toggleAuth('login');
-        }
+        app.showSection('dashboard');
     },
 
     handlePublicSignup() {
@@ -98,6 +94,7 @@ const registration = {
         const password = document.getElementById('pub-password').value;
 
         const athleteData = {
+            id: Date.now(),
             unique_code: uniqueCode,
             password: password,
             name: document.getElementById('pub-name').value,
@@ -114,6 +111,10 @@ const registration = {
         // Success flow
         document.getElementById('display-unique-code').innerText = uniqueCode;
         document.getElementById('success-modal').classList.remove('hidden');
+        
+        // Auto-login
+        app.isAdmin = false;
+        app.autoLogin(athleteData);
         
         document.getElementById('public-signup-form').reset();
     }
