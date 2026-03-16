@@ -1,0 +1,11 @@
+{
+  "name": "sala",
+  "compatibility_date": "2024-03-15",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
