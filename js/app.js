@@ -7,11 +7,14 @@ const app = {
     init() {
         this.bindEvents();
         
-        // Detect /start route (support both path and hash routing)
+        // Detect routes (support both path and hash routing)
         const path = window.location.pathname;
         const hash = window.location.hash;
+        
         if (path.endsWith('/start') || hash === '#/start') {
             this.currentRoute = 'start';
+        } else if (path.endsWith('/nou') || hash === '#/nou') {
+            this.currentRoute = 'nou';
         } else {
             this.currentRoute = 'main';
         }
@@ -43,15 +46,22 @@ const app = {
             return;
         }
 
+        if (this.currentRoute === 'nou') {
+            mainApp.classList.remove('hidden');
+            // Hide nav and show only registration
+            document.getElementById('main-nav').classList.add('hidden');
+            this.showSection('registration');
+            return;
+        }
+
         if (this.isLoggedIn) {
             mainApp.classList.remove('hidden');
             
             // Role based navigation
+            navReg.classList.add('hidden'); // Always hide "Sportiv Nou" from nav as per request
             if (this.isAdmin) {
-                navReg.classList.remove('hidden');
                 navEvents.classList.remove('hidden');
             } else {
-                navReg.classList.add('hidden');
                 navEvents.classList.add('hidden');
             }
             
