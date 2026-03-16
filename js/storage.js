@@ -52,6 +52,29 @@ const storage = {
         if (index !== -1) {
             athletes[index].points = (athletes[index].points || 0) + parseInt(pointsToAdd);
             this.saveAthletes(athletes);
+            return athletes[index]; // Return updated athlete
         }
+        return null;
+    },
+
+    recordStartLogin(id) {
+        const athletes = this.getAthletes();
+        const index = athletes.findIndex(a => a.id === id);
+        if (index !== -1) {
+            athletes[index].last_start_login = new Date().toISOString();
+            this.saveAthletes(athletes);
+        }
+    },
+
+    canLoginToStart(id) {
+        const athletes = this.getAthletes();
+        const athlete = athletes.find(a => a.id === id);
+        if (!athlete || !athlete.last_start_login) return true;
+
+        const lastLogin = new Date(athlete.last_start_login);
+        const now = new Date();
+        const diffInHours = (now - lastLogin) / (1000 * 60 * 60);
+        
+        return diffInHours >= 1; // 1 hour cooldown
     }
 };

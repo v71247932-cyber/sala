@@ -125,16 +125,57 @@ const app = {
     },
 
     handleStartLogin() {
-        const code = document.getElementById('start-id').value;
+        const input = document.getElementById('start-id');
+        const code = input.value;
         const athletes = storage.getAthletes();
         const athlete = athletes.find(a => a.unique_code === code);
 
         if (athlete) {
-            this.isAdmin = false;
-            this.autoLogin(athlete);
+            if (!storage.canLoginToStart(athlete.id)) {
+                alert('Poti folosi codul doar o data pe ora! Te rugam sa astepti.');
+                input.value = '';
+                return;
+            }
+
+            // Award points and record login
+            storage.updateAthletePoints(athlete.id, 50);
+            storage.recordStartLogin(athlete.id);
+
+            // Show welcome popup
+            const firstName = athlete.name.split(' ')[0];
+            this.showWelcomePopup(firstName);
+
+            // Clear input after 2 seconds for next child
+            setTimeout(() => {
+                input.value = '';
+                // Optional: hide popup if it's still there
+                const popup = document.getElementById('welcome-popup');
+                if (popup) popup.classList.add('hidden');
+            }, 2000);
+
         } else {
             alert('Cod incorect! Te rugăm să verifici codul primit la înregistrare.');
+            input.value = '';
         }
+    },
+
+    showWelcomePopup(name) {
+        let popup = document.getElementById('welcome-popup');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'welcome-popup';
+            popup.className = 'welcome-overlay';
+            document.body.appendChild(popup);
+        }
+
+        popup.innerHTML = `
+            <div class="welcome-card">
+                <div class="welcome-icon"><i class="fas fa-check-circle"></i></div>
+                <h2>Bun venit, ${name}!</h2>
+                <p>Ai primit <strong>+50 puncte</strong></p>
+            </div>
+        `;
+        popup.classList.remove('hidden');
     },
 
     autoLogin(user) {

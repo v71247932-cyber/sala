@@ -273,3 +273,57 @@ input:focus, select:focus {
         margin-bottom: 0.5rem;
     }
 }
+
+/* Welcome Popup Styles */
+.welcome-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.welcome-card {
+    background: var(--bg-card);
+    border: 2px solid var(--primary);
+    border-radius: 2rem;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 0 50px var(--primary-glow);
+    animation: welcomePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.welcome-icon {
+    font-size: 5rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.welcome-card h2 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #fff, var(--primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-card p {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+}
+
+.welcome-card strong {
+    color: var(--accent);
+    font-size: 1.5rem;
+}
+
+@keyframes welcomePop {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}
