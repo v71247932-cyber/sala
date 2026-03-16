@@ -9,6 +9,36 @@ const storage = {
 
     saveAthletes(athletes) {
         localStorage.setItem(this.ATHLETES_KEY, JSON.stringify(athletes));
+        this.syncToServer();
+    },
+
+    async syncFromServer() {
+        try {
+            const response = await fetch('/api/athletes');
+            if (response.ok) {
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    localStorage.setItem(this.ATHLETES_KEY, JSON.stringify(data));
+                    return data;
+                }
+            }
+        } catch (err) {
+            console.error('Sync from server failed:', err);
+        }
+        return this.getAthletes();
+    },
+
+    async syncToServer() {
+        try {
+            const athletes = this.getAthletes();
+            await fetch('/api/athletes', {
+                method: 'POST',
+                body: JSON.stringify(athletes),
+                headers: { 'Content-Type': 'application/json' }
+            });
+        } catch (err) {
+            console.error('Sync to server failed:', err);
+        }
     },
 
     saveSession(user, isAdmin) {

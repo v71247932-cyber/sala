@@ -27,6 +27,12 @@ const app = {
             this.currentUser = session.user;
         }
 
+        // Sync data from server
+        storage.syncFromServer().then(() => {
+            this.updateView();
+            console.log('Data synced from server');
+        });
+
         this.updateView();
         console.log('App initialized on route:', this.currentRoute);
     },
