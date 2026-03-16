@@ -86,7 +86,11 @@ const registration = {
 
     closeSuccess() {
         document.getElementById('success-modal').classList.add('hidden');
-        app.showSection('dashboard');
+        if (app.isLoggedIn) {
+            app.showSection('dashboard');
+        } else {
+            app.toggleAuth('login');
+        }
     },
 
     handlePublicSignup() {
