@@ -38,6 +38,11 @@ const app = {
         // Reset visibility
         [authScreen, startScreen, mainApp].forEach(s => s?.classList.add('hidden'));
 
+        if (this.currentRoute === 'start') {
+            startScreen.classList.remove('hidden');
+            return;
+        }
+
         if (this.isLoggedIn) {
             mainApp.classList.remove('hidden');
             
@@ -51,11 +56,24 @@ const app = {
             }
             
             this.showSection('dashboard');
+            this.updateHeaderUserInfo();
         } else {
-            if (this.currentRoute === 'start') {
-                startScreen.classList.remove('hidden');
+            authScreen.classList.remove('hidden');
+        }
+    },
+
+    updateHeaderUserInfo() {
+        const userInfo = document.getElementById('user-info-display');
+        if (userInfo && this.currentUser) {
+            if (this.isAdmin) {
+                userInfo.innerHTML = `<span style="color: var(--accent); font-weight: bold;">ADMIN</span>`;
             } else {
-                authScreen.classList.remove('hidden');
+                userInfo.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Cod Acces</span>
+                        <span style="font-size: 1.1rem; font-weight: 800; color: var(--primary);">${this.currentUser.unique_code}</span>
+                    </div>
+                `;
             }
         }
     },
