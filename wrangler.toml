@@ -4,5 +4,5 @@ compatibility_date = "2024-03-15"
 [assets]
 directory = "."
 binding = "ASSETS"
-# Handle SPA routing: redirects all non-file paths to index.html
-# This works in conjunction with the _redirects file.
+html_handling = "auto"
+not_found_handling = "single-page-application"
