@@ -8,13 +8,16 @@ const app = {
         this.bindEvents();
 
         // Detect routes (support both path and hash routing)
-        const path = window.location.pathname;
-        const hash = window.location.hash;
+        // Detect routes (support both path and hash routing)
+        const path = window.location.pathname.toLowerCase().replace(/\/$/, '') || '/';
+        const hash = window.location.hash.toLowerCase();
         const params = new URLSearchParams(window.location.search);
 
-        if (path.endsWith('/start') || hash === '#/start' || hash === '#start' || params.get('page') === 'start') {
+        console.log('Detecting route - Path:', path, 'Hash:', hash);
+
+        if (path === '/start' || hash === '#/start' || hash === '#start' || params.get('page') === 'start') {
             this.currentRoute = 'start';
-        } else if (path.endsWith('/nou') || hash === '#/nou' || hash === '#nou' || params.get('page') === 'nou') {
+        } else if (path === '/nou' || hash === '#/nou' || hash === '#nou' || params.get('page') === 'nou') {
             this.currentRoute = 'nou';
         } else {
             this.currentRoute = 'main';
