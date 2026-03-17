@@ -181,7 +181,7 @@ const app = {
 
         if (athlete) {
             if (!storage.canLoginToStart(athlete.id)) {
-                alert('Poti folosi codul doar o data pe ora! Te rugam sa astepti.');
+                alert('Poti folosi codul doar o data pe zi! Te rugam sa astepti pana maine.');
                 input.value = '';
                 return;
             }

@@ -1,6 +1,7 @@
 const storage = {
     ATHLETES_KEY: 'athlete_data',
     CREDENTIALS_KEY: 'athlete_credentials',
+    COOLDOWN_KEY: 'local_start_cooldowns',
 
     getAthletes() {
         const data = localStorage.getItem(this.ATHLETES_KEY);
@@ -90,22 +91,42 @@ const storage = {
     recordStartLogin(id) {
         const athletes = this.getAthletes();
         const index = athletes.findIndex(a => a.id === id);
+        const now = new Date().toISOString();
+        
         if (index !== -1) {
-            athletes[index].last_start_login = new Date().toISOString();
+            athletes[index].last_start_login = now;
             this.saveAthletes(athletes);
         }
+
+        // Also save to a local-only key that won't be overwritten by server sync
+        const cooldowns = JSON.parse(localStorage.getItem(this.COOLDOWN_KEY) || '{}');
+        cooldowns[id] = now;
+        localStorage.setItem(this.COOLDOWN_KEY, JSON.stringify(cooldowns));
     },
 
     canLoginToStart(id) {
         const athletes = this.getAthletes();
         const athlete = athletes.find(a => a.id === id);
-        if (!athlete || !athlete.last_start_login) return true;
+        
+        // 1. Check synced athlete data
+        let lastLoginStr = athlete?.last_start_login;
 
-        const lastLogin = new Date(athlete.last_start_login);
+        // 2. Check local-only cooldowns (secondary protection against refresh/sync race)
+        const cooldowns = JSON.parse(localStorage.getItem(this.COOLDOWN_KEY) || '{}');
+        const localLastLogin = cooldowns[id];
+
+        // Use the most recent of the two
+        if (localLastLogin && (!lastLoginStr || new Date(localLastLogin) > new Date(lastLoginStr))) {
+            lastLoginStr = localLastLogin;
+        }
+
+        if (!lastLoginStr) return true;
+
+        const lastLogin = new Date(lastLoginStr);
         const now = new Date();
         const diffInHours = (now - lastLogin) / (1000 * 60 * 60);
         
-        return diffInHours >= 1; // 1 hour cooldown
+        return diffInHours >= 24; // 24 hour cooldown (once per day)
     },
 
     updateAthlete(id, data) {
