@@ -10,10 +10,11 @@ const app = {
         // Detect routes (support both path and hash routing)
         const path = window.location.pathname;
         const hash = window.location.hash;
+        const params = new URLSearchParams(window.location.search);
 
-        if (path.endsWith('/start') || hash === '#/start') {
+        if (path.endsWith('/start') || hash === '#/start' || hash === '#start' || params.get('page') === 'start') {
             this.currentRoute = 'start';
-        } else if (path.endsWith('/nou') || hash === '#/nou') {
+        } else if (path.endsWith('/nou') || hash === '#/nou' || hash === '#nou' || params.get('page') === 'nou') {
             this.currentRoute = 'nou';
         } else {
             this.currentRoute = 'main';
