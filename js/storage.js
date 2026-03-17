@@ -106,5 +106,16 @@ const storage = {
         const diffInHours = (now - lastLogin) / (1000 * 60 * 60);
         
         return diffInHours >= 1; // 1 hour cooldown
+    },
+
+    updateAthlete(id, data) {
+        const athletes = this.getAthletes();
+        const index = athletes.findIndex(a => a.id === id);
+        if (index !== -1) {
+            athletes[index] = { ...athletes[index], ...data };
+            this.saveAthletes(athletes);
+            return athletes[index];
+        }
+        return null;
     }
 };
