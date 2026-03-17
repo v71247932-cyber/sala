@@ -41,10 +41,13 @@ const app = {
                     }
                 }
             }
+        }).catch(err => {
+            console.error('App init sync failed:', err);
+        }).finally(() => {
             this.updateView();
             const loader = document.getElementById('loading-screen');
             if (loader) loader.style.display = 'none';
-            console.log('Data synced from server');
+            console.log('App initialized and view updated');
         });
 
         // For start/nou routes, don't block on server sync — show immediately
@@ -67,33 +70,35 @@ const app = {
         [authScreen, startScreen, mainApp].forEach(s => s?.classList.add('hidden'));
 
         if (this.currentRoute === 'start') {
-            startScreen.classList.remove('hidden');
+            startScreen?.classList.remove('hidden');
             return;
         }
 
         if (this.currentRoute === 'nou') {
-            mainApp.classList.remove('hidden');
+            mainApp?.classList.remove('hidden');
             // Hide nav and show only registration
-            document.getElementById('main-nav').classList.add('hidden');
+            document.getElementById('main-nav')?.classList.add('hidden');
             this.showSection('registration');
             return;
         }
 
         if (this.isLoggedIn) {
-            mainApp.classList.remove('hidden');
+            mainApp?.classList.remove('hidden');
 
             // Role based navigation
-            navReg.classList.add('hidden'); // Always hide "Sportiv Nou" from nav as per request
-            if (this.isAdmin) {
-                navEvents.classList.remove('hidden');
-            } else {
-                navEvents.classList.add('hidden');
+            if (navReg) navReg.classList.add('hidden'); // Always hide "Sportiv Nou" from nav as per request
+            if (navEvents) {
+                if (this.isAdmin) {
+                    navEvents.classList.remove('hidden');
+                } else {
+                    navEvents.classList.add('hidden');
+                }
             }
 
             this.showSection('dashboard');
             this.updateHeaderUserInfo();
         } else {
-            authScreen.classList.remove('hidden');
+            authScreen?.classList.remove('hidden');
         }
     },
 
