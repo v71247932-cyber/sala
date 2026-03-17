@@ -6,11 +6,11 @@ const app = {
 
     init() {
         this.bindEvents();
-        
+
         // Detect routes (support both path and hash routing)
         const path = window.location.pathname;
         const hash = window.location.hash;
-        
+
         if (path.endsWith('/start') || hash === '#/start') {
             this.currentRoute = 'start';
         } else if (path.endsWith('/nou') || hash === '#/nou') {
@@ -19,21 +19,39 @@ const app = {
             this.currentRoute = 'main';
         }
 
-        // Check for persistent session
-        const session = storage.getSession();
-        if (session) {
-            this.isLoggedIn = true;
-            this.isAdmin = session.isAdmin;
-            this.currentUser = session.user;
-        }
-
-        // Sync data from server
+        // Sync data from server, then try to restore session from credentials
         storage.syncFromServer().then(() => {
+            const creds = storage.getCredentials();
+            if (creds) {
+                if (creds.isAdmin) {
+                    this.isLoggedIn = true;
+                    this.isAdmin = true;
+                    this.currentUser = { name: 'Administrator' };
+                } else {
+                    const athletes = storage.getAthletes();
+                    const athlete = athletes.find(a => a.email === creds.email && a.password === creds.password);
+                    if (athlete) {
+                        this.isLoggedIn = true;
+                        this.isAdmin = false;
+                        this.currentUser = athlete;
+                    } else {
+                        // Credentials no longer valid (e.g. account deleted)
+                        storage.clearCredentials();
+                    }
+                }
+            }
             this.updateView();
+            const loader = document.getElementById('loading-screen');
+            if (loader) loader.style.display = 'none';
             console.log('Data synced from server');
         });
 
-        this.updateView();
+        // For start/nou routes, don't block on server sync — show immediately
+        if (this.currentRoute !== 'main') {
+            this.updateView();
+            const loader = document.getElementById('loading-screen');
+            if (loader) loader.style.display = 'none';
+        }
         console.log('App initialized on route:', this.currentRoute);
     },
 
@@ -62,7 +80,7 @@ const app = {
 
         if (this.isLoggedIn) {
             mainApp.classList.remove('hidden');
-            
+
             // Role based navigation
             navReg.classList.add('hidden'); // Always hide "Sportiv Nou" from nav as per request
             if (this.isAdmin) {
@@ -70,7 +88,7 @@ const app = {
             } else {
                 navEvents.classList.add('hidden');
             }
-            
+
             this.showSection('dashboard');
             this.updateHeaderUserInfo();
         } else {
@@ -125,6 +143,7 @@ const app = {
 
         if (email === 'admin@admin.ro' && pass === 'oijoij') {
             this.isAdmin = true;
+            storage.saveCredentials(email, pass, true);
             this.autoLogin({ name: 'Administrator' });
             return;
         }
@@ -134,6 +153,7 @@ const app = {
 
         if (athlete) {
             this.isAdmin = false;
+            storage.saveCredentials(email, pass, false);
             this.autoLogin(athlete);
         } else {
             alert('Email sau parolă incorectă!');
@@ -197,7 +217,6 @@ const app = {
     autoLogin(user) {
         this.isLoggedIn = true;
         this.currentUser = user;
-        storage.saveSession(this.currentUser, this.isAdmin);
         this.updateView();
     },
 
@@ -205,7 +224,7 @@ const app = {
         this.isLoggedIn = false;
         this.isAdmin = false;
         this.currentUser = null;
-        storage.clearSession();
+        storage.clearCredentials();
         // Return to the route they were on
         this.updateView();
     },
@@ -213,7 +232,7 @@ const app = {
     showSection(sectionId) {
         document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
         document.getElementById(sectionId).classList.remove('hidden');
-        
+
         document.querySelectorAll('.nav-link').forEach(l => {
             l.classList.remove('active');
             if (l.getAttribute('onclick')?.includes(sectionId)) {
@@ -222,7 +241,7 @@ const app = {
         });
 
         this.currentSection = sectionId;
-        
+
         // Trigger specific section updates
         if (sectionId === 'dashboard') {
             dashboard.render();

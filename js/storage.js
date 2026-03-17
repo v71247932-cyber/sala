@@ -1,6 +1,6 @@
 const storage = {
     ATHLETES_KEY: 'athlete_data',
-    SESSION_KEY: 'athlete_session',
+    CREDENTIALS_KEY: 'athlete_credentials',
 
     getAthletes() {
         const data = localStorage.getItem(this.ATHLETES_KEY);
@@ -41,17 +41,17 @@ const storage = {
         }
     },
 
-    saveSession(user, isAdmin) {
-        localStorage.setItem(this.SESSION_KEY, JSON.stringify({ user, isAdmin }));
+    saveCredentials(email, password, isAdmin) {
+        localStorage.setItem(this.CREDENTIALS_KEY, JSON.stringify({ email, password, isAdmin }));
     },
 
-    getSession() {
-        const data = localStorage.getItem(this.SESSION_KEY);
+    getCredentials() {
+        const data = localStorage.getItem(this.CREDENTIALS_KEY);
         return data ? JSON.parse(data) : null;
     },
 
-    clearSession() {
-        localStorage.removeItem(this.SESSION_KEY);
+    clearCredentials() {
+        localStorage.removeItem(this.CREDENTIALS_KEY);
     },
 
     addAthlete(athlete) {
