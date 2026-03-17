@@ -8,20 +8,24 @@ const app = {
         this.bindEvents();
 
         // Detect routes (support both path and hash routing)
-        // Detect routes (support both path and hash routing)
-        const path = window.location.pathname.toLowerCase().replace(/\/$/, '') || '/';
+        const path = window.location.pathname.toLowerCase();
         const hash = window.location.hash.toLowerCase();
         const params = new URLSearchParams(window.location.search);
 
-        console.log('Detecting route - Path:', path, 'Hash:', hash);
+        console.log('--- ROUTE DETECTION ---');
+        console.log('Path:', path);
+        console.log('Hash:', hash);
+        console.log('Search:', window.location.search);
 
-        if (path === '/start' || hash === '#/start' || hash === '#start' || params.get('page') === 'start') {
+        if (path === '/start' || path.endsWith('/start') || path.endsWith('/start/') || hash === '#/start' || hash === '#start' || params.get('page') === 'start') {
             this.currentRoute = 'start';
-        } else if (path === '/nou' || hash === '#/nou' || hash === '#nou' || params.get('page') === 'nou') {
+        } else if (path === '/nou' || path.endsWith('/nou') || path.endsWith('/nou/') || hash === '#/nou' || hash === '#nou' || params.get('page') === 'nou') {
             this.currentRoute = 'nou';
         } else {
             this.currentRoute = 'main';
         }
+
+        console.log('Detected Route:', this.currentRoute);
 
         // Sync data from server, then try to restore session from credentials
         storage.syncFromServer().then(() => {
