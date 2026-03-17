@@ -67,7 +67,6 @@ const registration = {
             goal: document.getElementById('reg-goal').value,
             height: document.getElementById('reg-height').value,
             weight: document.getElementById('reg-weight').value,
-            photo: document.getElementById('reg-photo').value,
             guardian: {
                 name: document.getElementById('reg-guardian-name').value,
                 phone: document.getElementById('reg-guardian-phone').value
