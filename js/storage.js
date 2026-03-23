@@ -61,6 +61,8 @@ const storage = {
             id: Date.now(),
             created_at: new Date().toISOString(),
             points: 0,
+            trainings: 0,
+            matches: 0,
 
             metrics: {
                 punch_force: 0,
