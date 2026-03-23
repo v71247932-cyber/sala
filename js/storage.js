@@ -67,7 +67,8 @@ const storage = {
                 long_jump: 0,
                 hang_time: 0,
                 plank: 0,
-                grip_strength: 0
+                grip_strength: 0,
+                push_ups: 0
             },
             ...athlete
         });
