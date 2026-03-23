@@ -58,6 +58,7 @@ const dashboard = {
         document.getElementById('eval-hang').value = m.hang_time || '';
         document.getElementById('eval-plank').value = m.plank || '';
         document.getElementById('eval-grip').value = m.grip_strength || '';
+        document.getElementById('eval-pushups').value = m.push_ups || '';
 
 
         document.getElementById('evaluation-modal').classList.remove('hidden');
@@ -83,7 +84,8 @@ const dashboard = {
                 long_jump: parseFloat(document.getElementById('eval-jump').value) || 0,
                 hang_time: parseFloat(document.getElementById('eval-hang').value) || 0,
                 plank: parseFloat(document.getElementById('eval-plank').value) || 0,
-                grip_strength: parseFloat(document.getElementById('eval-grip').value) || 0
+                grip_strength: parseFloat(document.getElementById('eval-grip').value) || 0,
+                push_ups: parseFloat(document.getElementById('eval-pushups').value) || 0
             }
         };
 
@@ -102,7 +104,8 @@ const dashboard = {
             (metrics.long_jump / 300) * 100,
             (metrics.hang_time / 120) * 100,
             (metrics.plank / 300) * 100,
-            (metrics.grip_strength / 100) * 100
+            (metrics.grip_strength / 100) * 100,
+            (metrics.push_ups / 50) * 100
         ];
         
         const validValues = values.filter(v => !isNaN(v) && v > 0);
