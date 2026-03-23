@@ -260,6 +260,8 @@ const app = {
             dashboard.render();
         } else if (sectionId === 'events') {
             this.updateEventAthleteList();
+        } else if (sectionId === 'top10') {
+            reports.renderTop10();
         }
     },
 
