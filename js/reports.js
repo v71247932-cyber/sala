@@ -10,7 +10,6 @@ const reports = {
         const emailContent = `Salut, ${athlete.name}!
             
             Iată rezultatele tale pentru luna aceasta:
-            - Antrenamente: ${athlete.trainings || 0}
             - Scor Performanță: ${score}/100
             - Poziția în clasament: #${rank}
             

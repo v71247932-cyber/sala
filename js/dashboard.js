@@ -58,8 +58,7 @@ const dashboard = {
         document.getElementById('eval-hang').value = m.hang_time || '';
         document.getElementById('eval-plank').value = m.plank || '';
         document.getElementById('eval-grip').value = m.grip_strength || '';
-        document.getElementById('eval-trainings').value = athlete.trainings || '';
-        document.getElementById('eval-matches').value = athlete.matches || '';
+
 
         document.getElementById('evaluation-modal').classList.remove('hidden');
 
@@ -79,8 +78,6 @@ const dashboard = {
         e.preventDefault();
         const id = parseInt(document.getElementById('eval-athlete-id').value);
         const data = {
-            trainings: parseInt(document.getElementById('eval-trainings').value) || 0,
-            matches: parseInt(document.getElementById('eval-matches').value) || 0,
             metrics: {
                 punch_force: parseFloat(document.getElementById('eval-punch').value) || 0,
                 long_jump: parseFloat(document.getElementById('eval-jump').value) || 0,
