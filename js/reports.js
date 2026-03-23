@@ -47,8 +47,8 @@ const reports = {
     renderTop10() {
         const listContainer = document.getElementById('top10-list');
         const athletes = storage.getAthletes();
-        // Top 10 by points
-        const sorted = [...athletes].sort((a, b) => (b.points || 0) - (a.points || 0));
+        // Sort by Total Points
+        const sorted = [...athletes].sort((a, b) => dashboard.calculateTotalPoints(b) - dashboard.calculateTotalPoints(a));
         const top10 = sorted.slice(0, 10);
 
         if (top10.length === 0) {
@@ -76,7 +76,7 @@ const reports = {
 
     sendTop10Report(athleteId) {
         const athletes = storage.getAthletes();
-        const sorted = [...athletes].sort((a, b) => (b.points || 0) - (a.points || 0));
+        const sorted = [...athletes].sort((a, b) => dashboard.calculateTotalPoints(b) - dashboard.calculateTotalPoints(a));
         const top10 = sorted.slice(0, 10);
         
         const athlete = athletes.find(a => a.id === athleteId);
