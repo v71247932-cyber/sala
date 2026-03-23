@@ -35,7 +35,7 @@ const dashboard = {
                         ${a.active ? 'Activ' : 'Inactiv'}
                     </span>
                 </td>
-                <td style="padding: 1rem; font-weight: 600;">${a.points || 0} p</td>
+                <td style="padding: 1rem; font-weight: 600;">${this.calculateTotalPoints(a)} p</td>
                 <td style="padding: 1rem;">
                     ${app.isAdmin ? `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="dashboard.openEvaluation(${a.id})">Evaluare</button>` : ''}
                 </td>
@@ -59,6 +59,8 @@ const dashboard = {
         document.getElementById('eval-plank').value = m.plank || '';
         document.getElementById('eval-grip').value = m.grip_strength || '';
         document.getElementById('eval-pushups').value = m.push_ups || '';
+        document.getElementById('eval-trainings').value = athlete.trainings || '';
+        document.getElementById('eval-matches').value = athlete.matches || '';
 
 
         document.getElementById('evaluation-modal').classList.remove('hidden');
@@ -79,6 +81,8 @@ const dashboard = {
         e.preventDefault();
         const id = parseInt(document.getElementById('eval-athlete-id').value);
         const data = {
+            trainings: parseInt(document.getElementById('eval-trainings').value) || 0,
+            matches: parseInt(document.getElementById('eval-matches').value) || 0,
             metrics: {
                 punch_force: parseFloat(document.getElementById('eval-punch').value) || 0,
                 long_jump: parseFloat(document.getElementById('eval-jump').value) || 0,
@@ -113,6 +117,26 @@ const dashboard = {
         
         const average = validValues.reduce((a, b) => a + b, 0) / validValues.length;
         return Math.min(100, Math.round(average));
+    },
+
+    calculateTotalPoints(athlete) {
+        if (!athlete) return 0;
+        const m = athlete.metrics || {};
+        const eventPoints = athlete.points || 0;
+        
+        const metricPoints = 
+            (m.push_ups * 3) + 
+            (m.plank * 2) + 
+            (m.long_jump * 1) + 
+            (m.hang_time * 2) + 
+            (m.grip_strength * 3) + 
+            (m.punch_force * 3);
+            
+        // Assuming 1 training = 10 points and 1 match = 20 points
+        const trainingPoints = (athlete.trainings || 0) * 10;
+        const matchPoints = (athlete.matches || 0) * 20;
+        
+        return eventPoints + metricPoints + trainingPoints + matchPoints;
     }
 };
 
