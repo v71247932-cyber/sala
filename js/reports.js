@@ -11,6 +11,7 @@ const reports = {
             
             Iată rezultatele tale pentru luna aceasta:
             - Scor Performanță: ${score}/100
+            - Flotări (nr): ${athlete.metrics?.push_ups || 0}
             - Poziția în clasament: #${rank}
             
             Continuă să te antrenezi din greu!`;
@@ -96,6 +97,7 @@ Săritura în lungime (cm): ${m.long_jump || 0}
 Timp agățat (sec): ${m.hang_time || 0}
 Plank (sec): ${m.plank || 0}
 Forța strângerii (kg): ${m.grip_strength || 0}
+Flotări (nr): ${m.push_ups || 0}
 
 Felicitări și continuă să te antrenezi din greu!`;
         
