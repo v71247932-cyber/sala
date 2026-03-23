@@ -116,7 +116,7 @@ Felicitări și continuă să te antrenezi din greu!`;
     calculateRank(athleteId) {
         const athletes = storage.getAthletes();
         const sorted = [...athletes].sort((a, b) => {
-            return dashboard.calculateScore(b.metrics) - dashboard.calculateScore(a.metrics);
+            return dashboard.calculateTotalPoints(b) - dashboard.calculateTotalPoints(a);
         });
         return sorted.findIndex(a => a.id === athleteId) + 1;
     },
