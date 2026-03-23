@@ -11,7 +11,9 @@ const reports = {
             
             Iată rezultatele tale pentru luna aceasta:
             - Scor Performanță: ${score}/100
+            - Puncte Totale: ${dashboard.calculateTotalPoints(athlete)} p
             - Flotări (nr): ${athlete.metrics?.push_ups || 0}
+            - Nr. Antrenamente: ${athlete.trainings || 0}
             - Poziția în clasament: #${rank}
             
             Continuă să te antrenezi din greu!`;
@@ -64,7 +66,7 @@ const reports = {
                         <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
                     </div>
                 </td>
-                <td style="padding: 1rem; font-weight: 600; color: var(--primary);">${a.points || 0} p</td>
+                <td style="padding: 1rem; font-weight: 600; color: var(--primary);">${dashboard.calculateTotalPoints(a)} p</td>
                 <td style="padding: 1rem;">
                     ${app.isAdmin ? `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="reports.sendTop10Report(${a.id})">Trimite Email</button>` : ''}
                 </td>
@@ -84,7 +86,7 @@ const reports = {
         
         let top10Text = '';
         top10.forEach((a, i) => {
-            top10Text += `${i + 1}. ${a.name} - ${a.points || 0} p\n`;
+            top10Text += `${i + 1}. ${a.name} - ${dashboard.calculateTotalPoints(a)} p\n`;
         });
 
         const m = athlete.metrics || {};
@@ -98,6 +100,8 @@ Timp agățat (sec): ${m.hang_time || 0}
 Plank (sec): ${m.plank || 0}
 Forța strângerii (kg): ${m.grip_strength || 0}
 Flotări (nr): ${m.push_ups || 0}
+Nr. Antrenamente: ${athlete.trainings || 0}
+Nr. Meciuri: ${athlete.matches || 0}
 
 Felicitări și continuă să te antrenezi din greu!`;
         
