@@ -1,4 +1,108 @@
 const reports = {
+    // Helper: copy HTML to clipboard and open Gmail compose
+    _sendHtmlEmail(to, subject, html) {
+        // Create a temporary container to copy rich HTML
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        container.style.position = 'fixed';
+        container.style.left = '-9999px';
+        document.body.appendChild(container);
+
+        const range = document.createRange();
+        range.selectNodeContents(container);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        try {
+            document.execCommand('copy');
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}`;
+            window.open(gmailUrl, '_blank');
+            alert('Email-ul a fost copiat în clipboard! Dă paste (Ctrl+V / Cmd+V) în corpul email-ului din Gmail.');
+        } catch (err) {
+            alert('Nu s-a putut copia. Încearcă manual.');
+        }
+
+        selection.removeAllRanges();
+        document.body.removeChild(container);
+    },
+
+    // Generate medal emoji for rank
+    _medal(rank) {
+        if (rank === 1) return '🥇';
+        if (rank === 2) return '🥈';
+        if (rank === 3) return '🥉';
+        return `#${rank}`;
+    },
+
+    // Build HTML top 10 table
+    _buildTop10TableHtml(top10) {
+        let rows = '';
+        top10.forEach((a, i) => {
+            const bgColor = i === 0 ? '#fff8e1' : i === 1 ? '#f5f5f5' : i === 2 ? '#fff3e0' : (i % 2 === 0 ? '#ffffff' : '#f9fafb');
+            const fontWeight = i < 3 ? 'bold' : 'normal';
+            rows += `<tr style="background:${bgColor};">
+                <td style="padding:10px 14px;text-align:center;font-weight:${fontWeight};font-size:16px;">${this._medal(i + 1)}</td>
+                <td style="padding:10px 14px;font-weight:${fontWeight};">${a.name}</td>
+                <td style="padding:10px 14px;text-align:center;font-weight:bold;color:#0ea5e9;">${dashboard.calculateTotalPoints(a)} p</td>
+            </tr>`;
+        });
+
+        return `<table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif;">
+            <thead>
+                <tr style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;">
+                    <th style="padding:12px 14px;text-align:center;width:60px;">Loc</th>
+                    <th style="padding:12px 14px;text-align:left;">Sportiv</th>
+                    <th style="padding:12px 14px;text-align:center;width:100px;">Puncte</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>`;
+    },
+
+    // Build HTML points breakdown table for an athlete
+    _buildBreakdownTableHtml(athlete) {
+        const m = athlete.metrics || {};
+        const rows = [
+            ['Flotări', `${m.push_ups || 0} nr`, '× 2p', `${Math.round((m.push_ups || 0) * 2)}p`],
+            ['Plank', `${m.plank || 0} sec`, '× 1p', `${Math.round((m.plank || 0) * 1)}p`],
+            ['Săritura în lungime', `${m.long_jump || 0} cm`, '× 0.5p', `${Math.round((m.long_jump || 0) * 0.5)}p`],
+            ['Timp agățat', `${m.hang_time || 0} sec`, '× 2p', `${Math.round((m.hang_time || 0) * 2)}p`],
+            ['Forța strângerii', `${m.grip_strength || 0} kg`, '× 2p', `${Math.round((m.grip_strength || 0) * 2)}p`],
+            ['Forța loviturii', `${m.punch_force || 0} kgf`, '× 0.5p', `${Math.round((m.punch_force || 0) * 0.5)}p`],
+            ['Evenimente (prezențe, etc.)', '', '', `${athlete.points || 0}p`],
+        ];
+
+        let rowsHtml = '';
+        rows.forEach(([label, val, mult, pts], i) => {
+            const bg = i % 2 === 0 ? '#ffffff' : '#f9fafb';
+            rowsHtml += `<tr style="background:${bg};">
+                <td style="padding:8px 14px;">${label}</td>
+                <td style="padding:8px 14px;text-align:center;color:#64748b;">${val}</td>
+                <td style="padding:8px 14px;text-align:center;color:#64748b;">${mult}</td>
+                <td style="padding:8px 14px;text-align:center;font-weight:bold;color:#0ea5e9;">${pts}</td>
+            </tr>`;
+        });
+
+        return `<table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;font-family:Arial,sans-serif;font-size:14px;">
+            <thead>
+                <tr style="background:#f1f5f9;">
+                    <th style="padding:10px 14px;text-align:left;">Probă</th>
+                    <th style="padding:10px 14px;text-align:center;">Valoare</th>
+                    <th style="padding:10px 14px;text-align:center;">Multiplicator</th>
+                    <th style="padding:10px 14px;text-align:center;">Puncte</th>
+                </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+            <tfoot>
+                <tr style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;">
+                    <td colspan="3" style="padding:10px 14px;font-weight:bold;">TOTAL</td>
+                    <td style="padding:10px 14px;text-align:center;font-weight:bold;font-size:16px;">${dashboard.calculateTotalPoints(athlete)} p</td>
+                </tr>
+            </tfoot>
+        </table>`;
+    },
+
     sendMonthlyReport(athleteId) {
         const athletes = storage.getAthletes();
         const athlete = athletes.find(a => a.id === athleteId);
@@ -6,23 +110,41 @@ const reports = {
 
         const score = dashboard.calculateScore(athlete.metrics);
         const rank = this.calculateRank(athleteId);
+        const totalPts = dashboard.calculateTotalPoints(athlete);
 
-        const emailContent = `Salut, ${athlete.name}!
-            
-            Iată rezultatele tale pentru luna aceasta:
-            - Scor Performanță: ${score}/100
-            - Puncte Totale: ${dashboard.calculateTotalPoints(athlete)} p
-            - Flotări (nr): ${athlete.metrics?.push_ups || 0}
-            - Poziția în clasament: #${rank}
-            
-            Continuă să te antrenezi din greu!`;
-        
-        const subject = encodeURIComponent(`Raport Lunar de Performanță - ${athlete.name}`);
-        const body = encodeURIComponent(emailContent);
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${athlete.email}&su=${subject}&body=${body}`;
-        window.open(gmailUrl, '_blank');
-        
-        alert(`Se deschide Gmail pentru trimiterea raportului către ${athlete.email}`);
+        const html = `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1e293b;">
+            <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                <h1 style="color:white;margin:0;font-size:28px;">FitGo</h1>
+                <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px;">Raport Lunar</p>
+            </div>
+            <div style="padding:24px;background:#ffffff;border:1px solid #e2e8f0;">
+                <p style="font-size:16px;margin:0 0 20px;">Salut, <strong>${athlete.name}</strong>!</p>
+
+                <div style="display:flex;gap:12px;margin-bottom:24px;">
+                    <div style="flex:1;background:#f0f9ff;border-radius:10px;padding:16px;text-align:center;">
+                        <div style="font-size:12px;color:#64748b;">Scor</div>
+                        <div style="font-size:28px;font-weight:bold;color:#0ea5e9;">${score}/100</div>
+                    </div>
+                    <div style="flex:1;background:#f0fdf4;border-radius:10px;padding:16px;text-align:center;">
+                        <div style="font-size:12px;color:#64748b;">Puncte</div>
+                        <div style="font-size:28px;font-weight:bold;color:#10b981;">${totalPts}p</div>
+                    </div>
+                    <div style="flex:1;background:#fff7ed;border-radius:10px;padding:16px;text-align:center;">
+                        <div style="font-size:12px;color:#64748b;">Clasament</div>
+                        <div style="font-size:28px;font-weight:bold;color:#f59e0b;">${this._medal(rank)}</div>
+                    </div>
+                </div>
+
+                <h3 style="margin:0 0 12px;color:#334155;">Detalii puncte</h3>
+                ${this._buildBreakdownTableHtml(athlete)}
+            </div>
+            <div style="background:#f8fafc;padding:16px 24px;text-align:center;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:none;">
+                <p style="margin:0;color:#94a3b8;font-size:12px;">Continuă să te antrenezi din greu! 💪</p>
+            </div>
+        </div>`;
+
+        this._sendHtmlEmail(athlete.email, `Raport Lunar de Performanță - ${athlete.name}`, html);
     },
 
     sendInactivityEmail(athleteId) {
@@ -89,41 +211,38 @@ const reports = {
         if (!athlete) return;
 
         const rank = sorted.findIndex(a => a.id === athleteId) + 1;
+        const totalPts = dashboard.calculateTotalPoints(athlete);
 
-        let top10Text = '';
-        top10.forEach((a, i) => {
-            top10Text += `${i + 1}. ${a.name} - ${dashboard.calculateTotalPoints(a)} p\n`;
-        });
+        const html = `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1e293b;">
+            <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                <h1 style="color:white;margin:0;font-size:28px;">FitGo</h1>
+                <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px;">Raport Lunar de Performanță</p>
+            </div>
 
-        const m = athlete.metrics || {};
-        const bd = dashboard.getPointsBreakdown(athlete);
-        let breakdownText = '\nDetalii puncte:\n';
-        for (const [label, val] of Object.entries(bd)) {
-            if (val > 0) breakdownText += `  ${label}: ${val}p\n`;
-        }
+            <div style="padding:24px;background:#ffffff;border:1px solid #e2e8f0;">
+                <p style="font-size:16px;margin:0 0 6px;">Salut, <strong>${athlete.name}</strong>!</p>
+                <p style="color:#64748b;margin:0 0 20px;">Iată rezultatele tale pe luna aceasta:</p>
 
-        const emailContent = `Salut ${athlete.name}, ai luat locul #${rank}!
+                <div style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;">
+                    <div style="font-size:14px;color:#64748b;margin-bottom:4px;">Locul tău în clasament</div>
+                    <div style="font-size:48px;font-weight:bold;color:#0ea5e9;">${this._medal(rank)}</div>
+                    <div style="font-size:24px;font-weight:bold;color:#0284c7;margin-top:4px;">${totalPts} puncte</div>
+                </div>
 
-Clasament Top 10 (Puncte):
-${top10Text}
-Rezultatele tale:
-Forța loviturii (kgf): ${m.punch_force || 0}
-Săritura în lungime (cm): ${m.long_jump || 0}
-Timp agățat (sec): ${m.hang_time || 0}
-Plank (sec): ${m.plank || 0}
-Forța strângerii (kg): ${m.grip_strength || 0}
-Flotări (nr): ${m.push_ups || 0}
-${breakdownText}
-Total: ${dashboard.calculateTotalPoints(athlete)} puncte
+                <h3 style="margin:0 0 12px;color:#334155;">Detalii puncte</h3>
+                ${this._buildBreakdownTableHtml(athlete)}
 
-Felicitări și continuă să te antrenezi din greu!`;
+                <h3 style="margin:24px 0 12px;color:#334155;">Clasament Top 10</h3>
+                ${this._buildTop10TableHtml(top10)}
+            </div>
 
-        const subject = encodeURIComponent(`Clasament Lunar FitGo & Rezultate - ${athlete.name}`);
-        const body = encodeURIComponent(emailContent);
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${athlete.email}&su=${subject}&body=${body}`;
-        window.open(gmailUrl, '_blank');
+            <div style="background:#f8fafc;padding:16px 24px;text-align:center;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:none;">
+                <p style="margin:0;color:#94a3b8;font-size:12px;">Continuă să te antrenezi din greu! 💪</p>
+            </div>
+        </div>`;
 
-        alert(`Se deschide Gmail pentru trimiterea raportului către ${athlete.email}`);
+        this._sendHtmlEmail(athlete.email, `Clasament Lunar FitGo & Rezultate - ${athlete.name}`, html);
     },
 
     sendTop10ToAll() {
@@ -138,19 +257,35 @@ Felicitări și continuă să te antrenezi din greu!`;
 
         const emails = top10.map(a => a.email).join(',');
 
-        let top10Text = '';
-        top10.forEach((a, i) => {
-            top10Text += `${i + 1}. ${a.name} - ${dashboard.calculateTotalPoints(a)} p\n`;
-        });
+        const html = `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1e293b;">
+            <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+                <h1 style="color:white;margin:0;font-size:28px;">FitGo</h1>
+                <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px;">Clasament Lunar Top 10</p>
+            </div>
 
-        const emailContent = `Salut campionilor!\n\nIată clasamentul Top 10 pe luna aceasta:\n\n${top10Text}\nFelicitări tuturor! Continuați să vă antrenați din greu!\n\nSistem de puncte:\n1 flotare = 2p | 1 sec plank = 1p | 1 cm săritură = 0.5p\n1 sec agățat = 2p | 1 kg strângere = 2p | 1 kgf lovitură = 0.5p\n1 prezență sală = 50p`;
+            <div style="padding:24px;background:#ffffff;border:1px solid #e2e8f0;">
+                <p style="font-size:16px;margin:0 0 20px;">Salut campionilor! 🏆</p>
+                <p style="color:#64748b;margin:0 0 20px;">Iată clasamentul Top 10 pe luna aceasta:</p>
 
-        const subject = encodeURIComponent('Clasament Lunar Top 10 FitGo');
-        const body = encodeURIComponent(emailContent);
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emails}&su=${subject}&body=${body}`;
-        window.open(gmailUrl, '_blank');
+                ${this._buildTop10TableHtml(top10)}
 
-        alert(`Se deschide Gmail pentru trimiterea clasamentului către ${top10.length} sportivi.`);
+                <div style="margin-top:24px;padding:16px;background:#f0f9ff;border-radius:8px;border:1px solid #bae6fd;">
+                    <h4 style="margin:0 0 8px;color:#0284c7;">Sistem de puncte</h4>
+                    <p style="margin:0;font-size:13px;color:#64748b;line-height:1.8;">
+                        1 flotare = <strong>2p</strong> &nbsp;|&nbsp; 1 sec plank = <strong>1p</strong> &nbsp;|&nbsp; 1 cm săritură = <strong>0.5p</strong><br>
+                        1 sec agățat = <strong>2p</strong> &nbsp;|&nbsp; 1 kg strângere = <strong>2p</strong> &nbsp;|&nbsp; 1 kgf lovitură = <strong>0.5p</strong><br>
+                        1 prezență sală = <strong>50p</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div style="background:#f8fafc;padding:16px 24px;text-align:center;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:none;">
+                <p style="margin:0;color:#94a3b8;font-size:12px;">Felicitări tuturor! Continuați să vă antrenați din greu! 💪</p>
+            </div>
+        </div>`;
+
+        this._sendHtmlEmail(emails, 'Clasament Lunar Top 10 FitGo', html);
     },
 
     calculateRank(athleteId) {
