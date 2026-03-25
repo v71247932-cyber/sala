@@ -72,6 +72,7 @@ const app = {
         const mainApp = document.getElementById('main-app');
         const navReg = document.getElementById('nav-registration-link');
         const navEvents = document.getElementById('nav-events-link');
+        const navTop10 = document.getElementById('nav-top10-link');
 
         // Reset visibility
         [authScreen, startScreen, mainApp].forEach(s => s?.classList.add('hidden'));
@@ -99,6 +100,14 @@ const app = {
                     navEvents.classList.remove('hidden');
                 } else {
                     navEvents.classList.add('hidden');
+                }
+            }
+            if (navTop10) {
+                if (this.isAdmin) {
+                    navTop10.style.display = '';
+                    navTop10.classList.remove('hidden');
+                } else {
+                    navTop10.style.display = 'none';
                 }
             }
 

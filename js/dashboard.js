@@ -59,10 +59,6 @@ const dashboard = {
         document.getElementById('eval-plank').value = m.plank || '';
         document.getElementById('eval-grip').value = m.grip_strength || '';
         document.getElementById('eval-pushups').value = m.push_ups || '';
-        document.getElementById('eval-trainings').value = athlete.trainings || '';
-        document.getElementById('eval-matches').value = athlete.matches || '';
-
-
         document.getElementById('evaluation-modal').classList.remove('hidden');
 
         // Mock history data for chart
@@ -81,8 +77,6 @@ const dashboard = {
         e.preventDefault();
         const id = parseInt(document.getElementById('eval-athlete-id').value);
         const data = {
-            trainings: parseInt(document.getElementById('eval-trainings').value) || 0,
-            matches: parseInt(document.getElementById('eval-matches').value) || 0,
             metrics: {
                 punch_force: parseFloat(document.getElementById('eval-punch').value) || 0,
                 long_jump: parseFloat(document.getElementById('eval-jump').value) || 0,
@@ -119,24 +113,39 @@ const dashboard = {
         return Math.min(100, Math.round(average));
     },
 
+    // Sistem de puncte per metric evaluare
+    METRIC_POINTS: {
+        push_ups: { multiplier: 2, unit: 'nr', label: 'Flotări' },           // 1 flotare = 2p
+        plank: { multiplier: 1, unit: 'sec', label: 'Plank' },               // 1 sec = 1p
+        long_jump: { multiplier: 0.5, unit: 'cm', label: 'Săritura' },       // 1 cm = 0.5p
+        hang_time: { multiplier: 2, unit: 'sec', label: 'Timp agățat' },     // 1 sec = 2p
+        grip_strength: { multiplier: 2, unit: 'kg', label: 'Forța strângerii' }, // 1 kg = 2p
+        punch_force: { multiplier: 0.5, unit: 'kgf', label: 'Forța loviturii' } // 1 kgf = 0.5p
+    },
+
     calculateTotalPoints(athlete) {
         if (!athlete) return 0;
         const m = athlete.metrics || {};
         const eventPoints = athlete.points || 0;
-        
-        const metricPoints = 
-            (m.push_ups * 3) + 
-            (m.plank * 2) + 
-            (m.long_jump * 1) + 
-            (m.hang_time * 2) + 
-            (m.grip_strength * 3) + 
-            (m.punch_force * 3);
-            
-        // Assuming 1 training = 10 points and 1 match = 20 points
-        const trainingPoints = (athlete.trainings || 0) * 10;
-        const matchPoints = (athlete.matches || 0) * 20;
-        
-        return eventPoints + metricPoints + trainingPoints + matchPoints;
+
+        // Puncte din evaluări (metrici)
+        let metricPoints = 0;
+        for (const [key, config] of Object.entries(this.METRIC_POINTS)) {
+            metricPoints += Math.round((m[key] || 0) * config.multiplier);
+        }
+
+        return eventPoints + metricPoints;
+    },
+
+    getPointsBreakdown(athlete) {
+        if (!athlete) return {};
+        const m = athlete.metrics || {};
+        const breakdown = {};
+        for (const [key, config] of Object.entries(this.METRIC_POINTS)) {
+            breakdown[config.label] = Math.round((m[key] || 0) * config.multiplier);
+        }
+        breakdown['Evenimente'] = athlete.points || 0;
+        return breakdown;
     }
 };
 

@@ -277,17 +277,40 @@
 
                 <!-- Top 10 Section -->
                 <section id="top10" class="section hidden">
-                    <div class="header-actions" style="margin-bottom: 2rem;">
-                        <h2>Top 10 Lunar (după puncte)</h2>
-                        <p style="color: var(--text-muted);">Acesta este clasamentul celor mai buni sportivi pe luna în curs.</p>
+                    <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h2>Top 10 Lunar (după puncte)</h2>
+                            <p style="color: var(--text-muted);">Clasamentul celor mai buni sportivi pe luna în curs.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" onclick="reports.sendTop10ToAll()" id="btn-send-all-top10">
+                                <i class="fas fa-paper-plane"></i> Trimite la toți Top 10
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- Legendă puncte -->
+                    <div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem;">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary);">Sistem de puncte</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                            <span>1 flotare = <b style="color: var(--primary);">2p</b></span>
+                            <span>1 sec plank = <b style="color: var(--primary);">1p</b></span>
+                            <span>1 cm săritură = <b style="color: var(--primary);">0.5p</b></span>
+                            <span>1 sec agățat = <b style="color: var(--primary);">2p</b></span>
+                            <span>1 kg strângere = <b style="color: var(--primary);">2p</b></span>
+                            <span>1 kgf lovitură = <b style="color: var(--primary);">0.5p</b></span>
+                            <span>1 prezență sală = <b style="color: var(--primary);">50p</b></span>
+                        </div>
+                    </div>
+
                     <div class="card" style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                             <thead>
                                 <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted);">
                                     <th style="padding: 1rem;">Loc</th>
                                     <th style="padding: 1rem;">Sportiv</th>
-                                    <th style="padding: 1rem;">Puncte</th>
+                                    <th style="padding: 1rem;">Detalii Puncte</th>
+                                    <th style="padding: 1rem;">Total</th>
                                     <th style="padding: 1rem;">Acțiuni</th>
                                 </tr>
                             </thead>
@@ -339,20 +362,10 @@
                                     <label>Forța strângerii (kg)</label>
                                     <input type="number" id="eval-grip" required>
                                 </div>
-                            <div class="grid-cols-2">
-                                <div class="form-group">
+                            <div class="form-group">
                                     <label>Flotări (nr)</label>
                                     <input type="number" id="eval-pushups" required>
                                 </div>
-                                <div class="form-group">
-                                    <label>Nr. Antrenamente</label>
-                                    <input type="number" id="eval-trainings" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Nr. Meciuri</label>
-                                <input type="number" id="eval-matches" required>
-                            </div>
 
                             <button type="submit" class="btn btn-primary" style="width: 100%;">Salvează
                                 Evaluarea</button>
