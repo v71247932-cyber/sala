@@ -120,6 +120,7 @@
                 <div class="logo">FitGo</div>
                 <div class="nav-links">
                     <a class="nav-link active" onclick="app.showSection('dashboard')">Dashboard</a>
+                    <a class="nav-link" id="nav-todo-link" onclick="app.showSection('todo')" style="display: none;">To Do</a>
                     <a class="nav-link" id="nav-events-link" onclick="app.showSection('events')">Evenimente</a>
                     <a class="nav-link" id="nav-top10-link" onclick="app.showSection('top10')" style="display: none;">Top 10 Lunar</a>
                 </div>
@@ -272,6 +273,55 @@
                         </div>
                         <button class="btn btn-primary" id="add-points-btn" onclick="events.handleAddPoints()">Adaugă
                             Puncte</button>
+                    </div>
+                </section>
+
+                <!-- To Do Section -->
+                <section id="todo" class="section hidden">
+                    <div class="header-actions" style="margin-bottom: 2rem;">
+                        <h2>To Do</h2>
+                        <p style="color: var(--text-muted);">Sportivi care au nevoie de atenție.</p>
+                    </div>
+
+                    <!-- Inactive Athletes -->
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <h3 style="margin-bottom: 1rem; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>Sportivi Inactivi (7+ zile)</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">Nu și-au scanat codul de acces de peste 7 zile.</p>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted);">
+                                        <th style="padding: 0.75rem 1rem;">Sportiv</th>
+                                        <th style="padding: 0.75rem 1rem;">Ultima prezență</th>
+                                        <th style="padding: 0.75rem 1rem;">Zile absente</th>
+                                        <th style="padding: 0.75rem 1rem;">Acțiune</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="todo-inactive-list">
+                                    <!-- Rows injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Athletes needing evaluation -->
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem; color: #f59e0b;"><i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i>De Evaluat</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">Sportivi care nu au fost evaluați încă.</p>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted);">
+                                        <th style="padding: 0.75rem 1rem;">Sportiv</th>
+                                        <th style="padding: 0.75rem 1rem;">Contact</th>
+                                        <th style="padding: 0.75rem 1rem;">Acțiune</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="todo-eval-list">
+                                    <!-- Rows injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 

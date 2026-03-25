@@ -157,6 +157,78 @@ const reports = {
         this._openEmail(athlete.email, `Ne e dor de tine, ${athlete.name}!`, html);
     },
 
+    renderTodo() {
+        const athletes = storage.getAthletes();
+        const now = new Date();
+
+        // Inactive: no login for 7+ days (or never logged in via /start)
+        const inactive = athletes.filter(a => {
+            if (!a.last_start_login) return true;
+            const days = (now - new Date(a.last_start_login)) / (1000 * 60 * 60 * 24);
+            return days >= 7;
+        });
+
+        // Needs evaluation: all metrics are 0 or missing
+        const needsEval = athletes.filter(a => {
+            const m = a.metrics || {};
+            return !m.punch_force && !m.long_jump && !m.hang_time && !m.plank && !m.grip_strength && !m.push_ups;
+        });
+
+        // Render inactive list
+        const inactiveList = document.getElementById('todo-inactive-list');
+        if (inactive.length === 0) {
+            inactiveList.innerHTML = '<tr><td colspan="4" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Toți sportivii sunt activi! 🎉</td></tr>';
+        } else {
+            inactiveList.innerHTML = inactive.map(a => {
+                let lastLoginText = 'Niciodată';
+                let daysAbsent = '∞';
+                if (a.last_start_login) {
+                    const lastDate = new Date(a.last_start_login);
+                    lastLoginText = lastDate.toLocaleDateString('ro-RO');
+                    daysAbsent = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+                }
+                return `
+                <tr style="border-bottom: 1px solid var(--border);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <img src="${a.photo || 'https://via.placeholder.com/36'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #ef4444;">
+                        <div>
+                            <div style="font-weight: 600;">${a.name}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
+                        </div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem; color: var(--text-muted);">${lastLoginText}</td>
+                    <td style="padding: 0.75rem 1rem;"><span style="color: #ef4444; font-weight: bold;">${daysAbsent} zile</span></td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; border-color: #ef4444; color: #ef4444;" onclick="reports.sendInactivityEmail(${a.id})">
+                            <i class="fas fa-envelope"></i> Trimite Email
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Render needs eval list
+        const evalList = document.getElementById('todo-eval-list');
+        if (needsEval.length === 0) {
+            evalList.innerHTML = '<tr><td colspan="3" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Toți sportivii au fost evaluați! ✅</td></tr>';
+        } else {
+            evalList.innerHTML = needsEval.map(a => `
+                <tr style="border-bottom: 1px solid var(--border);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <img src="${a.photo || 'https://via.placeholder.com/36'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #f59e0b;">
+                        <div style="font-weight: 600;">${a.name}</div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem; color: var(--text-muted);">${a.email}</td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="dashboard.openEvaluation(${a.id})">
+                            <i class="fas fa-clipboard-check"></i> Evaluează
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    },
+
     renderTop10() {
         const listContainer = document.getElementById('top10-list');
         const athletes = storage.getAthletes();

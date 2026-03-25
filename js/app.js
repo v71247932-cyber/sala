@@ -73,6 +73,7 @@ const app = {
         const navReg = document.getElementById('nav-registration-link');
         const navEvents = document.getElementById('nav-events-link');
         const navTop10 = document.getElementById('nav-top10-link');
+        const navTodo = document.getElementById('nav-todo-link');
 
         // Reset visibility
         [authScreen, startScreen, mainApp].forEach(s => s?.classList.add('hidden'));
@@ -108,6 +109,14 @@ const app = {
                     navTop10.classList.remove('hidden');
                 } else {
                     navTop10.style.display = 'none';
+                }
+            }
+            if (navTodo) {
+                if (this.isAdmin) {
+                    navTodo.style.display = '';
+                    navTodo.classList.remove('hidden');
+                } else {
+                    navTodo.style.display = 'none';
                 }
             }
 
@@ -271,6 +280,8 @@ const app = {
             this.updateEventAthleteList();
         } else if (sectionId === 'top10') {
             reports.renderTop10();
+        } else if (sectionId === 'todo') {
+            reports.renderTodo();
         }
     },
 
