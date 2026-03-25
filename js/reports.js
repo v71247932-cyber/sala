@@ -1,8 +1,14 @@
 const reports = {
-    // Helper: open email with body pre-filled via mailto (works with any mail app)
-    _openEmail(to, subject, body) {
-        const mailtoUrl = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.open(mailtoUrl, '_self');
+    // Helper: copy formatted text to clipboard and open Gmail compose
+    async _openEmail(to, subject, body) {
+        try {
+            await navigator.clipboard.writeText(body);
+        } catch (e) {
+            // fallback: silent fail, user can copy manually
+        }
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${encodeURIComponent(subject)}`;
+        window.open(gmailUrl, '_blank');
+        alert('Textul emailului a fost copiat în clipboard!\nDă paste (Ctrl+V / Cmd+V) în Gmail.');
     },
 
     // Generate medal for rank
