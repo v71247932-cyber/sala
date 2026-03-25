@@ -1,8 +1,8 @@
 const reports = {
     // Helper: open email with body pre-filled via mailto (works with any mail app)
     _openEmail(to, subject, body) {
-        const mailtoUrl = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.location.href = mailtoUrl;
+        const mailtoUrl = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailtoUrl, '_self');
     },
 
     // Generate medal for rank
