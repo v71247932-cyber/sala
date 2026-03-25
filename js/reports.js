@@ -1,30 +1,35 @@
 const reports = {
     // Helper: copy HTML to clipboard and open Gmail compose
-    _sendHtmlEmail(to, subject, html) {
-        // Create a temporary container to copy rich HTML
-        const container = document.createElement('div');
-        container.innerHTML = html;
-        container.style.position = 'fixed';
-        container.style.left = '-9999px';
-        document.body.appendChild(container);
-
-        const range = document.createRange();
-        range.selectNodeContents(container);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-
+    async _sendHtmlEmail(to, subject, html) {
         try {
-            document.execCommand('copy');
+            const htmlBlob = new Blob([html], { type: 'text/html' });
+            const textBlob = new Blob([html.replace(/<[^>]*>/g, '')], { type: 'text/plain' });
+            await navigator.clipboard.write([
+                new ClipboardItem({
+                    'text/html': htmlBlob,
+                    'text/plain': textBlob
+                })
+            ]);
             const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}`;
             window.open(gmailUrl, '_blank');
-            alert('Email-ul a fost copiat în clipboard! Dă paste (Ctrl+V / Cmd+V) în corpul email-ului din Gmail.');
+            alert('Email-ul a fost copiat în clipboard!\nDă paste (Ctrl+V / Cmd+V) în corpul email-ului din Gmail.');
         } catch (err) {
-            alert('Nu s-a putut copia. Încearcă manual.');
+            console.error('Clipboard write failed:', err);
+            // Fallback: open preview window with the email content
+            const previewWindow = window.open('', '_blank', 'width=650,height=700');
+            previewWindow.document.write(`
+                <html><head><title>Preview Email</title></head>
+                <body style="margin:0;padding:20px;background:#f1f5f9;font-family:Arial,sans-serif;">
+                    <div style="max-width:600px;margin:0 auto;">
+                        <p style="text-align:center;color:#64748b;margin-bottom:12px;">Selectează tot (Ctrl+A / Cmd+A), copiază (Ctrl+C / Cmd+C), apoi paste în Gmail</p>
+                        <div id="email-content">${html}</div>
+                    </div>
+                </body></html>
+            `);
+            previewWindow.document.close();
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}`;
+            window.open(gmailUrl, '_blank');
         }
-
-        selection.removeAllRanges();
-        document.body.removeChild(container);
     },
 
     // Generate medal emoji for rank
