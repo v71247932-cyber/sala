@@ -138,23 +138,50 @@ const reports = {
         const athlete = athletes.find(a => a.id === athleteId);
         if (!athlete) return;
 
+        const daysAbsent = athlete.last_start_login
+            ? Math.floor((new Date() - new Date(athlete.last_start_login)) / (1000 * 60 * 60 * 24))
+            : '...';
+
         const html = `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1e293b;">
-            <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
-                <h1 style="color:white;margin:0;font-size:28px;">FitGo</h1>
+        <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;color:#1e293b;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+            <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7,#0369a1);padding:40px 30px;text-align:center;">
+                <div style="font-size:60px;margin-bottom:12px;">😢</div>
+                <h1 style="color:white;margin:0 0 8px 0;font-size:26px;font-weight:700;">Ne e dor de tine!</h1>
+                <p style="color:rgba(255,255,255,0.85);margin:0;font-size:15px;">Sala nu e la fel fără tine</p>
             </div>
-            <div style="padding:24px;background:#ffffff;border:1px solid #e2e8f0;">
-                <p style="font-size:16px;">Salut, <strong>${athlete.name}</strong>!</p>
-                <p style="color:#64748b;">Am observat că nu ai mai trecut pe la sală de peste o săptămână.</p>
-                <p style="color:#64748b;">Te așteptăm cu drag la următorul antrenament! 💪</p>
-                <p style="color:#64748b;">Nu uita: fiecare prezență la sală = <strong>50 de puncte</strong>! 🏆</p>
+
+            <div style="padding:32px 28px;background:#ffffff;">
+                <p style="font-size:18px;margin:0 0 16px 0;">Salut, <strong>${athlete.name}</strong>! 👋</p>
+
+                <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:20px;margin:20px 0;text-align:center;">
+                    <p style="margin:0 0 4px 0;color:#92400e;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Zile de când nu te-am văzut</p>
+                    <p style="margin:0;color:#78350f;font-size:42px;font-weight:800;">${daysAbsent}</p>
+                </div>
+
+                <p style="color:#475569;font-size:15px;line-height:1.7;margin:20px 0;">
+                    Am observat că nu ai mai trecut pe la antrenament de ceva vreme.
+                    Colegii tăi te așteaptă, iar progresul nu se face singur! 💪
+                </p>
+
+                <div style="background:#f0f9ff;border-left:4px solid #0ea5e9;border-radius:0 8px 8px 0;padding:16px 20px;margin:20px 0;">
+                    <p style="margin:0;color:#0c4a6e;font-size:14px;font-weight:600;">Nu uita!</p>
+                    <p style="margin:6px 0 0 0;color:#0369a1;font-size:14px;">Fiecare prezență la sală = <strong>50 puncte</strong> 🏆</p>
+                </div>
+
+                <div style="text-align:center;margin:28px 0 8px 0;">
+                    <div style="display:inline-block;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;padding:14px 40px;border-radius:50px;font-weight:700;font-size:16px;letter-spacing:0.5px;">
+                        Te așteptăm la sală! 🏋️
+                    </div>
+                </div>
             </div>
-            <div style="background:#f8fafc;padding:16px 24px;text-align:center;border-radius:0 0 12px 12px;border:1px solid #e2e8f0;border-top:none;">
-                <p style="margin:0;color:#94a3b8;font-size:12px;">Echipa FitGo</p>
+
+            <div style="background:#f1f5f9;padding:20px 28px;text-align:center;border-top:1px solid #e2e8f0;">
+                <p style="margin:0 0 4px 0;color:#64748b;font-size:13px;font-weight:600;">Echipa FitGo</p>
+                <p style="margin:0;color:#94a3b8;font-size:11px;">Hai la antrenament! Succesul vine din constanță.</p>
             </div>
         </div>`;
 
-        this._openEmail(athlete.email, `Ne e dor de tine, ${athlete.name}!`, html);
+        this._openEmail(athlete.email, `Ne e dor de tine, ${athlete.name}! 😢`, html);
     },
 
     renderTodo() {

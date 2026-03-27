@@ -4,7 +4,7 @@
     {
       "name": "fitgo-dev",
       "runtimeExecutable": "php",
-      "runtimeArgs": ["-S", "localhost:8080"],
+      "runtimeArgs": ["-S", "localhost:8080", "-t", "."],
       "port": 8080
     }
   ]
