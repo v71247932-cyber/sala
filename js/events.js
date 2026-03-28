@@ -4,12 +4,11 @@ const events = {
         const evts = storage.getEvents();
 
         if (evts.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="padding: 2rem; text-align: center; color: var(--text-muted);">Niciun eveniment creat. Apasă "Eveniment Nou" pentru a adăuga.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="3" style="padding: 2rem; text-align: center; color: var(--text-muted);">Niciun eveniment creat. Apasă "Eveniment Nou" pentru a adăuga.</td></tr>';
             return;
         }
 
         tbody.innerHTML = evts.map(e => {
-            const dateStr = e.date ? new Date(e.date).toLocaleDateString('ro-RO', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
             return `<tr style="border-bottom: 1px solid var(--border);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 1rem;">
                     <div style="font-weight: 600;">${e.name}</div>
@@ -18,7 +17,6 @@ const events = {
                 <td style="padding: 1rem;">
                     <span style="background: rgba(14,165,233,0.1); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-weight: 700; font-size: 0.9rem;">+${e.points}p</span>
                 </td>
-                <td style="padding: 1rem; color: var(--text-muted);">${dateStr}</td>
                 <td style="padding: 1rem;">
                     <div style="display: flex; gap: 0.5rem;">
                         <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="events.openModal(${e.id})"><i class="fas fa-edit"></i></button>
@@ -42,7 +40,6 @@ const events = {
             document.getElementById('event-edit-id').value = editId;
             document.getElementById('event-name').value = evt.name;
             document.getElementById('event-points').value = evt.points;
-            document.getElementById('event-date').value = evt.date || '';
             document.getElementById('event-description').value = evt.description || '';
         } else {
             title.textContent = 'Eveniment Nou';
@@ -61,7 +58,6 @@ const events = {
         const data = {
             name: document.getElementById('event-name').value,
             points: parseInt(document.getElementById('event-points').value),
-            date: document.getElementById('event-date').value || null,
             description: document.getElementById('event-description').value || ''
         };
 
