@@ -239,27 +239,30 @@ const dashboard = {
             this.historyCharts.push(chart);
         };
 
-        makeChart('chart-pushups', history.map(h => h.push_ups || 0), '#eab308', 'rgba(234,179,8,0.15)');
-        makeChart('chart-plank', history.map(h => h.plank || 0), '#10b981', 'rgba(16,185,129,0.15)');
-        makeChart('chart-jump', history.map(h => h.long_jump || 0), '#3b82f6', 'rgba(59,130,246,0.15)');
-        makeChart('chart-hang', history.map(h => h.hang_time || 0), '#ef4444', 'rgba(239,68,68,0.15)');
-        makeChart('chart-grip', history.map(h => h.grip_strength || 0), '#8b5cf6', 'rgba(139,92,246,0.15)');
-        makeChart('chart-punch', history.map(h => h.punch_force || 0), '#f97316', 'rgba(249,115,22,0.15)');
-
-        // Overall score chart
-        const overallScores = history.map(h => {
-            let total = 0;
-            total += (h.push_ups || 0) * 2;
-            total += (h.plank || 0) * 1;
-            total += (h.long_jump || 0) * 0.5;
-            total += (h.hang_time || 0) * 2;
-            total += (h.grip_strength || 0) * 2;
-            total += (h.punch_force || 0) * 0.5;
-            return Math.round(total);
-        });
-        makeChart('chart-overall', overallScores, '#0ea5e9', 'rgba(14,165,233,0.15)');
-
+        // Show modal FIRST so Chart.js can measure canvas dimensions
         document.getElementById('history-modal').classList.remove('hidden');
+
+        // Create charts after modal is visible
+        setTimeout(() => {
+            makeChart('chart-pushups', history.map(h => h.push_ups || 0), '#eab308', 'rgba(234,179,8,0.15)');
+            makeChart('chart-plank', history.map(h => h.plank || 0), '#10b981', 'rgba(16,185,129,0.15)');
+            makeChart('chart-jump', history.map(h => h.long_jump || 0), '#3b82f6', 'rgba(59,130,246,0.15)');
+            makeChart('chart-hang', history.map(h => h.hang_time || 0), '#ef4444', 'rgba(239,68,68,0.15)');
+            makeChart('chart-grip', history.map(h => h.grip_strength || 0), '#8b5cf6', 'rgba(139,92,246,0.15)');
+            makeChart('chart-punch', history.map(h => h.punch_force || 0), '#f97316', 'rgba(249,115,22,0.15)');
+
+            const overallScores = history.map(h => {
+                let total = 0;
+                total += (h.push_ups || 0) * 2;
+                total += (h.plank || 0) * 1;
+                total += (h.long_jump || 0) * 0.5;
+                total += (h.hang_time || 0) * 2;
+                total += (h.grip_strength || 0) * 2;
+                total += (h.punch_force || 0) * 0.5;
+                return Math.round(total);
+            });
+            makeChart('chart-overall', overallScores, '#0ea5e9', 'rgba(14,165,233,0.15)');
+        }, 50);
     },
 
     closeHistory() {
