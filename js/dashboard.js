@@ -308,4 +308,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('evaluation-form').addEventListener('submit', (e) => dashboard.handleEvaluationSubmit(e));
+
+    // Escape key closes modals
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (!document.getElementById('history-modal').classList.contains('hidden')) {
+                dashboard.closeHistory();
+            } else if (!document.getElementById('evaluation-modal').classList.contains('hidden')) {
+                dashboard.closeEvaluation();
+            } else if (!document.getElementById('success-modal').classList.contains('hidden')) {
+                registration.closeSuccess();
+            }
+        }
+    });
 });
