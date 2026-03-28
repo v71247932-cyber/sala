@@ -16,7 +16,6 @@ const dashboard = {
         listContainer.innerHTML = athletes.map(a => `
             <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
-                    <img src="${a.photo || 'https://via.placeholder.com/40'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
                     <div>
                         <div style="font-weight: 600;">${a.name}</div>
                         <div style="font-size: 0.8rem; color: var(--text-muted);">${new Date(a.dob).toLocaleDateString('ro-RO')}</div>
@@ -26,9 +25,6 @@ const dashboard = {
                 <td style="padding: 1rem;">
                     <div style="font-size: 0.9rem;">${a.phone}</div>
                     <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
-                </td>
-                <td style="padding: 1rem;">
-                    <span style="font-weight: bold; color: var(--primary);">${this.calculateScore(a.metrics)}</span>
                 </td>
                 <td style="padding: 1rem;">
                     <span class="badge" style="background: ${a.active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${a.active ? '#10b981' : '#ef4444'}; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.8rem;">
