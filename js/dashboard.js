@@ -33,7 +33,12 @@ const dashboard = {
                 </td>
                 <td style="padding: 1rem; font-weight: 600;">${this.calculateTotalPoints(a)} p</td>
                 <td style="padding: 1rem;">
-                    ${app.isAdmin ? `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="dashboard.openEvaluation(${a.id})">Evaluare</button>` : ''}
+                    ${app.isAdmin ? `
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="dashboard.openEvaluation(${a.id})">Evaluare</button>
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(14, 165, 233, 0.1); color: var(--primary);" onclick="dashboard.openHistory(${a.id})">Vezi Istoric</button>
+                        </div>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -72,18 +77,37 @@ const dashboard = {
     handleEvaluationSubmit(e) {
         e.preventDefault();
         const id = parseInt(document.getElementById('eval-athlete-id').value);
-        const data = {
-            metrics: {
-                punch_force: parseFloat(document.getElementById('eval-punch').value) || 0,
-                long_jump: parseFloat(document.getElementById('eval-jump').value) || 0,
-                hang_time: parseFloat(document.getElementById('eval-hang').value) || 0,
-                plank: parseFloat(document.getElementById('eval-plank').value) || 0,
-                grip_strength: parseFloat(document.getElementById('eval-grip').value) || 0,
-                push_ups: parseFloat(document.getElementById('eval-pushups').value) || 0
-            }
+        const metrics = {
+            punch_force: parseFloat(document.getElementById('eval-punch').value) || 0,
+            long_jump: parseFloat(document.getElementById('eval-jump').value) || 0,
+            hang_time: parseFloat(document.getElementById('eval-hang').value) || 0,
+            plank: parseFloat(document.getElementById('eval-plank').value) || 0,
+            grip_strength: parseFloat(document.getElementById('eval-grip').value) || 0,
+            push_ups: parseFloat(document.getElementById('eval-pushups').value) || 0
         };
 
-        storage.updateAthlete(id, data);
+        // Save current metrics
+        storage.updateAthlete(id, { metrics });
+
+        // Save to evaluation history
+        const athletes = storage.getAthletes();
+        const athlete = athletes.find(a => a.id === id);
+        if (athlete) {
+            const history = athlete.evaluation_history || [];
+            const now = new Date();
+            const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+            // Replace if same month exists, otherwise add
+            const existingIdx = history.findIndex(h => h.month === monthKey);
+            const entry = { month: monthKey, date: now.toISOString(), ...metrics };
+            if (existingIdx >= 0) {
+                history[existingIdx] = entry;
+            } else {
+                history.push(entry);
+            }
+            storage.updateAthlete(id, { evaluation_history: history });
+        }
+
         this.closeEvaluation();
         this.render();
         alert('Evaluare salvată!');
@@ -131,6 +155,132 @@ const dashboard = {
         }
 
         return eventPoints + metricPoints;
+    },
+
+    // History modal
+    historyCharts: [],
+
+    openHistory(id) {
+        const athletes = storage.getAthletes();
+        const athlete = athletes.find(a => a.id === id);
+        if (!athlete) return;
+
+        document.getElementById('history-athlete-name').textContent = `Istoric: ${athlete.name}`;
+
+        let history = athlete.evaluation_history || [];
+
+        // If no history, use current metrics as the only entry
+        if (history.length === 0 && athlete.metrics) {
+            const now = new Date();
+            const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            history = [{ month: monthKey, date: now.toISOString(), ...athlete.metrics }];
+        }
+
+        // Sort by month
+        history.sort((a, b) => a.month.localeCompare(b.month));
+
+        const monthNames = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        // Render table
+        const tbody = document.getElementById('history-table-body');
+        tbody.innerHTML = history.map((h, i) => {
+            const [year, month] = h.month.split('-');
+            const monthName = monthNames[parseInt(month) - 1];
+            return `<tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 0.75rem; font-weight: 600; color: var(--primary);">Luna ${i + 1} (${monthName} ${year})</td>
+                <td style="padding: 0.75rem;">${h.push_ups || 0}</td>
+                <td style="padding: 0.75rem;">${h.plank || 0}</td>
+                <td style="padding: 0.75rem;">${h.long_jump || 0}</td>
+                <td style="padding: 0.75rem;">${h.hang_time || 0}</td>
+                <td style="padding: 0.75rem;">${h.grip_strength || 0}</td>
+                <td style="padding: 0.75rem;">${h.punch_force || 0}</td>
+            </tr>`;
+        }).join('');
+
+        // Destroy old charts
+        this.historyCharts.forEach(c => c.destroy());
+        this.historyCharts = [];
+
+        const labels = history.map((h, i) => {
+            const [year, month] = h.month.split('-');
+            return `${monthNames[parseInt(month) - 1]} ${year}`;
+        });
+
+        // Metrics chart
+        const metricsCtx = document.getElementById('history-metrics-chart').getContext('2d');
+        const metricsChart = new Chart(metricsCtx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    { label: 'Flotări', data: history.map(h => h.push_ups || 0), borderColor: '#eab308', backgroundColor: 'rgba(234,179,8,0.1)', tension: 0.3, fill: false },
+                    { label: 'Plank (s)', data: history.map(h => h.plank || 0), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3, fill: false },
+                    { label: 'Săritură (cm)', data: history.map(h => h.long_jump || 0), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, fill: false },
+                    { label: 'Agățat (s)', data: history.map(h => h.hang_time || 0), borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.3, fill: false },
+                    { label: 'Strângere (kg)', data: history.map(h => h.grip_strength || 0), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.3, fill: false },
+                    { label: 'Lovitură (kgf)', data: history.map(h => h.punch_force || 0), borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', tension: 0.3, fill: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#94a3b8' } } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+                }
+            }
+        });
+        this.historyCharts.push(metricsChart);
+
+        // Overall score chart
+        const overallCtx = document.getElementById('history-overall-chart').getContext('2d');
+        const overallScores = history.map(h => {
+            let total = 0;
+            total += (h.push_ups || 0) * 2;
+            total += (h.plank || 0) * 1;
+            total += (h.long_jump || 0) * 0.5;
+            total += (h.hang_time || 0) * 2;
+            total += (h.grip_strength || 0) * 2;
+            total += (h.punch_force || 0) * 0.5;
+            return Math.round(total);
+        });
+
+        const overallChart = new Chart(overallCtx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Scor Total Evaluare',
+                    data: overallScores,
+                    borderColor: '#0ea5e9',
+                    backgroundColor: 'rgba(14,165,233,0.15)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#0ea5e9',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#94a3b8' } } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+                }
+            }
+        });
+        this.historyCharts.push(overallChart);
+
+        document.getElementById('history-modal').classList.remove('hidden');
+    },
+
+    closeHistory() {
+        document.getElementById('history-modal').classList.add('hidden');
+        this.historyCharts.forEach(c => c.destroy());
+        this.historyCharts = [];
     },
 
     getPointsBreakdown(athlete) {
