@@ -213,12 +213,12 @@ const dashboard = {
             data: {
                 labels,
                 datasets: [
-                    { label: 'Flotări', data: history.map(h => h.push_ups || 0), borderColor: '#eab308', backgroundColor: 'rgba(234,179,8,0.1)', tension: 0.3, fill: false },
-                    { label: 'Plank (s)', data: history.map(h => h.plank || 0), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3, fill: false },
-                    { label: 'Săritură (cm)', data: history.map(h => h.long_jump || 0), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, fill: false },
-                    { label: 'Agățat (s)', data: history.map(h => h.hang_time || 0), borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.3, fill: false },
-                    { label: 'Strângere (kg)', data: history.map(h => h.grip_strength || 0), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.3, fill: false },
-                    { label: 'Lovitură (kgf)', data: history.map(h => h.punch_force || 0), borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', tension: 0.3, fill: false }
+                    { label: 'Flotări', data: history.map(h => h.push_ups || 0), borderColor: '#eab308', backgroundColor: 'rgba(234,179,8,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#eab308' },
+                    { label: 'Plank (s)', data: history.map(h => h.plank || 0), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#10b981' },
+                    { label: 'Săritură (cm)', data: history.map(h => h.long_jump || 0), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#3b82f6' },
+                    { label: 'Agățat (s)', data: history.map(h => h.hang_time || 0), borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#ef4444' },
+                    { label: 'Strângere (kg)', data: history.map(h => h.grip_strength || 0), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#8b5cf6' },
+                    { label: 'Lovitură (kgf)', data: history.map(h => h.punch_force || 0), borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#f97316' }
                 ]
             },
             options: {
@@ -255,7 +255,7 @@ const dashboard = {
                     data: overallScores,
                     borderColor: '#0ea5e9',
                     backgroundColor: 'rgba(14,165,233,0.15)',
-                    tension: 0.3,
+                    tension: 0.45,
                     fill: true,
                     pointRadius: 6,
                     pointBackgroundColor: '#0ea5e9',
