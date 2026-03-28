@@ -184,10 +184,11 @@ const dashboard = {
         // Render table
         const tbody = document.getElementById('history-table-body');
         tbody.innerHTML = history.map((h, i) => {
-            const [year, month] = h.month.split('-');
-            const monthName = monthNames[parseInt(month) - 1];
+            const evalDate = h.date ? new Date(h.date) : null;
+            const dateStr = evalDate ? evalDate.toLocaleDateString('ro-RO', { day: '2-digit', month: 'short', year: 'numeric' }) : h.month;
+            const timeStr = evalDate ? evalDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }) : '';
             return `<tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 0.75rem; font-weight: 600; color: var(--primary);">Luna ${i + 1} (${monthName} ${year})</td>
+                <td style="padding: 0.75rem; font-weight: 600; color: var(--primary);"><div>${dateStr}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${timeStr}</div></td>
                 <td style="padding: 0.75rem;">${h.push_ups || 0}</td>
                 <td style="padding: 0.75rem;">${h.plank || 0}</td>
                 <td style="padding: 0.75rem;">${h.long_jump || 0}</td>
