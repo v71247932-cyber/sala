@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitGo | Management Sportivi</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230ea5e9'/><stop offset='100%25' stop-color='%230284c7'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><text x='50' y='68' font-family='Arial' font-weight='900' font-size='48' fill='white' text-anchor='middle'>FG</text></svg>">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230ea5e9'/><stop offset='100%25' stop-color='%230284c7'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><text x='50' y='68' font-family='Arial' font-weight='900' font-size='48' fill='white' text-anchor='middle'>FG</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -121,9 +122,11 @@
                 <div class="logo">FitGo</div>
                 <div class="nav-links">
                     <a class="nav-link active" onclick="app.showSection('dashboard')">Dashboard</a>
-                    <a class="nav-link" id="nav-todo-link" onclick="app.showSection('todo')" style="display: none;">To Do</a>
+                    <a class="nav-link" id="nav-todo-link" onclick="app.showSection('todo')" style="display: none;">To
+                        Do</a>
                     <a class="nav-link" id="nav-events-link" onclick="app.showSection('events')">Evenimente</a>
-                    <a class="nav-link" id="nav-top10-link" onclick="app.showSection('top10')" style="display: none;">Top 10 Lunar</a>
+                    <a class="nav-link" id="nav-top10-link" onclick="app.showSection('top10')"
+                        style="display: none;">Top 10 Lunar</a>
                 </div>
                 <div style="display: flex; align-items: center; gap: 1.5rem;">
                     <div id="user-info-display" style="text-align: right;"></div>
@@ -286,8 +289,10 @@
 
                     <!-- Inactive Athletes -->
                     <div class="card" style="margin-bottom: 1.5rem;">
-                        <h3 style="margin-bottom: 1rem; color: #ef4444;"><i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>Sportivi Inactivi (7+ zile)</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">Nu și-au scanat codul de acces de peste 7 zile.</p>
+                        <h3 style="margin-bottom: 1rem; color: #ef4444;"><i class="fas fa-exclamation-triangle"
+                                style="margin-right: 0.5rem;"></i>Sportivi Inactivi (7+ zile)</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">Nu și-au scanat
+                            codul de acces de peste 7 zile.</p>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                 <thead>
@@ -307,8 +312,10 @@
 
                     <!-- Athletes needing evaluation -->
                     <div class="card">
-                        <h3 style="margin-bottom: 1rem; color: #f59e0b;"><i class="fas fa-clipboard-list" style="margin-right: 0.5rem;"></i>De Evaluat</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">Sportivi care nu au fost evaluați încă.</p>
+                        <h3 style="margin-bottom: 1rem; color: #f59e0b;"><i class="fas fa-clipboard-list"
+                                style="margin-right: 0.5rem;"></i>De Evaluat</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">Sportivi care nu au
+                            fost evaluați încă.</p>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                 <thead>
@@ -328,10 +335,12 @@
 
                 <!-- Top 10 Section -->
                 <section id="top10" class="section hidden">
-                    <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <div class="header-actions"
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                         <div>
                             <h2>Top 10 Lunar (după puncte)</h2>
-                            <p style="color: var(--text-muted);">Clasamentul celor mai buni sportivi pe luna în curs.</p>
+                            <p style="color: var(--text-muted);">Clasamentul celor mai buni sportivi pe luna în curs.
+                            </p>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
                             <button class="btn btn-primary" onclick="reports.sendTop10ToAll()" id="btn-send-all-top10">
@@ -343,7 +352,8 @@
                     <!-- Legendă puncte -->
                     <div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem;">
                         <h4 style="margin-bottom: 0.75rem; color: var(--primary);">Sistem de puncte</h4>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                        <div
+                            style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
                             <span>1 flotare = <b style="color: var(--primary);">2p</b></span>
                             <span>1 sec plank = <b style="color: var(--primary);">1p</b></span>
                             <span>1 cm săritură = <b style="color: var(--primary);">0.5p</b></span>
@@ -413,13 +423,13 @@
                                     <label>Forța strângerii (kg)</label>
                                     <input type="number" id="eval-grip" required>
                                 </div>
-                            <div class="form-group">
+                                <div class="form-group">
                                     <label>Flotări (nr)</label>
                                     <input type="number" id="eval-pushups" required>
                                 </div>
 
-                            <button type="submit" class="btn btn-primary" style="width: 100%;">Salvează
-                                Evaluarea</button>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Salvează
+                                    Evaluarea</button>
                         </form>
 
                         <div style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
@@ -453,12 +463,12 @@
         </div>
     </div>
 
-    <script src="/js/storage.js"></script>
-    <script src="/js/app.js"></script>
-    <script src="/js/registration.js"></script>
-    <script src="/js/dashboard.js"></script>
-    <script src="/js/events.js"></script>
-    <script src="/js/reports.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/registration.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/reports.js"></script>
 </body>
 
 </html>
