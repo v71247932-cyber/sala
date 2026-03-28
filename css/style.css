@@ -188,6 +188,12 @@ input:focus, select:focus {
     gap: 1.5rem;
 }
 
+/* Toast animation */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
 /* Hidden elements */
 .hidden {
     display: none !important;

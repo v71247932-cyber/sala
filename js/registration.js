@@ -50,7 +50,7 @@ const registration = {
     handleRegister() {
         const password = document.getElementById('reg-password').value;
         if (password.length < 6) {
-            alert('Parola trebuie să aibă minim 6 caractere!');
+            app.showToast('Parola trebuie să aibă minim 6 caractere!', 'error');
             return;
         }
 

@@ -187,7 +187,7 @@ const app = {
             storage.saveCredentials(email, pass, false);
             this.autoLogin(athlete);
         } else {
-            alert('Email sau parolă incorectă!');
+            app.showToast('Email sau parolă incorectă!', 'error');
         }
     },
 
@@ -199,7 +199,7 @@ const app = {
 
         if (athlete) {
             if (!storage.canLoginToStart(athlete.id)) {
-                alert('Poti folosi codul doar o data pe zi! Te rugam sa astepti pana maine.');
+                app.showToast('Poți folosi codul doar o dată pe zi!', 'error');
                 input.value = '';
                 return;
             }
@@ -221,9 +221,26 @@ const app = {
             }, 2000);
 
         } else {
-            alert('Cod incorect! Te rugăm să verifici codul primit la înregistrare.');
+            app.showToast('Cod incorect! Verifică codul primit la înregistrare.', 'error');
             input.value = '';
         }
+    },
+
+    showToast(message, type = 'success') {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.style.cssText = 'position:fixed;top:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:0.5rem;';
+            document.body.appendChild(container);
+        }
+        const colors = { success: '#10b981', error: '#ef4444', info: '#0ea5e9' };
+        const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+        const toast = document.createElement('div');
+        toast.style.cssText = `background:var(--card-bg,#1e293b);border:1px solid ${colors[type]};border-left:4px solid ${colors[type]};color:white;padding:0.75rem 1.25rem;border-radius:0.75rem;display:flex;align-items:center;gap:0.75rem;animation:slideIn 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.3);min-width:250px;`;
+        toast.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]};font-size:1.1rem;"></i><span style="font-size:0.9rem;">${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 2500);
     },
 
     showWelcomePopup(name) {

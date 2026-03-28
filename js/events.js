@@ -4,12 +4,12 @@ const events = {
         const points = document.getElementById('event-type').value;
         
         if (!athleteId) {
-            alert('Selectați un sportiv!');
+            app.showToast('Selectați un sportiv!', 'error');
             return;
         }
 
         storage.updateAthletePoints(parseInt(athleteId), points);
-        alert(`S-au adăugat ${points} puncte!`);
+        app.showToast(`S-au adăugat ${points} puncte!`);
         app.showSection('dashboard');
     }
 };

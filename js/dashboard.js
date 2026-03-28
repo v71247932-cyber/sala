@@ -110,7 +110,7 @@ const dashboard = {
 
         this.closeEvaluation();
         this.render();
-        alert('Evaluare salvată!');
+        app.showToast('Evaluare salvată!');
     },
 
     calculateScore(metrics) {
@@ -207,35 +207,46 @@ const dashboard = {
             return `${monthNames[parseInt(month) - 1]} ${year}`;
         });
 
-        // Metrics chart
-        const metricsCtx = document.getElementById('history-metrics-chart').getContext('2d');
-        const metricsChart = new Chart(metricsCtx, {
-            type: 'line',
-            data: {
-                labels,
-                datasets: [
-                    { label: 'Flotări', data: history.map(h => h.push_ups || 0), borderColor: '#eab308', backgroundColor: 'rgba(234,179,8,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#eab308' },
-                    { label: 'Plank (s)', data: history.map(h => h.plank || 0), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#10b981' },
-                    { label: 'Săritură (cm)', data: history.map(h => h.long_jump || 0), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#3b82f6' },
-                    { label: 'Agățat (s)', data: history.map(h => h.hang_time || 0), borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#ef4444' },
-                    { label: 'Strângere (kg)', data: history.map(h => h.grip_strength || 0), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#8b5cf6' },
-                    { label: 'Lovitură (kgf)', data: history.map(h => h.punch_force || 0), borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', tension: 0.45, fill: false, borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#f97316' }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#94a3b8' } } },
-                scales: {
-                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                    y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
-                }
+        const chartOpts = (color) => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
             }
         });
-        this.historyCharts.push(metricsChart);
+
+        const makeChart = (canvasId, data, color, bgColor) => {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        borderColor: color,
+                        backgroundColor: bgColor,
+                        tension: 0.45,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: color
+                    }]
+                },
+                options: chartOpts(color)
+            });
+            this.historyCharts.push(chart);
+        };
+
+        makeChart('chart-pushups', history.map(h => h.push_ups || 0), '#eab308', 'rgba(234,179,8,0.15)');
+        makeChart('chart-plank', history.map(h => h.plank || 0), '#10b981', 'rgba(16,185,129,0.15)');
+        makeChart('chart-jump', history.map(h => h.long_jump || 0), '#3b82f6', 'rgba(59,130,246,0.15)');
+        makeChart('chart-hang', history.map(h => h.hang_time || 0), '#ef4444', 'rgba(239,68,68,0.15)');
+        makeChart('chart-grip', history.map(h => h.grip_strength || 0), '#8b5cf6', 'rgba(139,92,246,0.15)');
+        makeChart('chart-punch', history.map(h => h.punch_force || 0), '#f97316', 'rgba(249,115,22,0.15)');
 
         // Overall score chart
-        const overallCtx = document.getElementById('history-overall-chart').getContext('2d');
         const overallScores = history.map(h => {
             let total = 0;
             total += (h.push_ups || 0) * 2;
@@ -246,34 +257,7 @@ const dashboard = {
             total += (h.punch_force || 0) * 0.5;
             return Math.round(total);
         });
-
-        const overallChart = new Chart(overallCtx, {
-            type: 'line',
-            data: {
-                labels,
-                datasets: [{
-                    label: 'Scor Total Evaluare',
-                    data: overallScores,
-                    borderColor: '#0ea5e9',
-                    backgroundColor: 'rgba(14,165,233,0.15)',
-                    tension: 0.45,
-                    fill: true,
-                    pointRadius: 6,
-                    pointBackgroundColor: '#0ea5e9',
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#94a3b8' } } },
-                scales: {
-                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                    y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
-                }
-            }
-        });
-        this.historyCharts.push(overallChart);
+        makeChart('chart-overall', overallScores, '#0ea5e9', 'rgba(14,165,233,0.15)');
 
         document.getElementById('history-modal').classList.remove('hidden');
     },

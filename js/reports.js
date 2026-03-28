@@ -12,7 +12,7 @@ const reports = {
         }
         const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${encodeURIComponent(subject)}`;
         window.open(gmailUrl, '_blank');
-        alert('Email-ul a fost copiat în clipboard!\nDă paste (Ctrl+V / Cmd+V) în Gmail.');
+        app.showToast('Email copiat! Dă paste (Cmd+V) în Gmail.', 'info');
     },
 
     // Generate medal emoji for rank
@@ -337,7 +337,7 @@ const reports = {
         const top10 = sorted.slice(0, 10);
 
         if (top10.length === 0) {
-            alert('Nu există sportivi în clasament.');
+            app.showToast('Nu există sportivi în clasament.', 'error');
             return;
         }
 

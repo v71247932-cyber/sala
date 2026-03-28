@@ -455,13 +455,35 @@
                                 <tbody id="history-table-body"></tbody>
                             </table>
                         </div>
-                        <h3 style="margin-bottom: 1rem;">Evoluție pe Metrici</h3>
-                        <div style="height: 300px; margin-bottom: 2rem;">
-                            <canvas id="history-metrics-chart"></canvas>
-                        </div>
-                        <h3 style="margin-bottom: 1rem;">Scor General</h3>
-                        <div style="height: 250px;">
-                            <canvas id="history-overall-chart"></canvas>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: #eab308;">Flotări</h4>
+                                <div style="height: 180px;"><canvas id="chart-pushups"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: #10b981;">Plank (s)</h4>
+                                <div style="height: 180px;"><canvas id="chart-plank"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: #3b82f6;">Săritură (cm)</h4>
+                                <div style="height: 180px;"><canvas id="chart-jump"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: #ef4444;">Agățat (s)</h4>
+                                <div style="height: 180px;"><canvas id="chart-hang"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: #8b5cf6;">Strângere (kg)</h4>
+                                <div style="height: 180px;"><canvas id="chart-grip"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: #f97316;">Lovitură (kgf)</h4>
+                                <div style="height: 180px;"><canvas id="chart-punch"></canvas></div>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <h4 style="margin-bottom: 0.5rem; color: #0ea5e9;">Scor General</h4>
+                                <div style="height: 220px;"><canvas id="chart-overall"></canvas></div>
+                            </div>
                         </div>
                     </div>
                 </div>
