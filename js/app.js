@@ -51,6 +51,7 @@ const app = {
         }).catch(err => {
             console.error('App init sync failed:', err);
         }).finally(() => {
+            this.seedDefaultEvents();
             this.updateView();
             const loader = document.getElementById('loading-screen');
             if (loader) loader.style.display = 'none';
@@ -294,7 +295,7 @@ const app = {
         if (sectionId === 'dashboard') {
             dashboard.render();
         } else if (sectionId === 'events') {
-            this.updateEventAthleteList();
+            events.render();
         } else if (sectionId === 'top10') {
             reports.renderTop10();
         } else if (sectionId === 'todo') {
@@ -302,10 +303,17 @@ const app = {
         }
     },
 
-    updateEventAthleteList() {
-        const select = document.getElementById('event-athlete-select');
-        const athletes = storage.getAthletes();
-        select.innerHTML = athletes.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+    // Seed default events if none exist
+    seedDefaultEvents() {
+        if (storage.getEvents().length === 0) {
+            const defaults = [
+                { name: 'Alergare Duminică', points: 100, description: 'Alergare de grup duminica dimineața' },
+                { name: 'Susținere la Meci', points: 50, description: 'Prezență la meciul echipei' },
+                { name: 'Seminar', points: 200, description: 'Participare la seminar sportiv' },
+                { name: 'Cantonament Rusca', points: 300, description: 'Cantonament de weekend la Rusca' }
+            ];
+            defaults.forEach(e => storage.addEvent(e));
+        }
     }
 };
 

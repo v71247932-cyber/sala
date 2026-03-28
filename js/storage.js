@@ -139,5 +139,40 @@ const storage = {
             return athletes[index];
         }
         return null;
+    },
+
+    // Events CRUD
+    EVENTS_KEY: 'events_data',
+
+    getEvents() {
+        const data = localStorage.getItem(this.EVENTS_KEY);
+        return data ? JSON.parse(data) : [];
+    },
+
+    saveEvents(evts) {
+        localStorage.setItem(this.EVENTS_KEY, JSON.stringify(evts));
+    },
+
+    addEvent(evt) {
+        const evts = this.getEvents();
+        evts.push({ id: Date.now(), created_at: new Date().toISOString(), ...evt });
+        this.saveEvents(evts);
+        return evts;
+    },
+
+    updateEvent(id, data) {
+        const evts = this.getEvents();
+        const i = evts.findIndex(e => e.id === id);
+        if (i !== -1) {
+            evts[i] = { ...evts[i], ...data };
+            this.saveEvents(evts);
+        }
+        return evts;
+    },
+
+    deleteEvent(id) {
+        const evts = this.getEvents().filter(e => e.id !== id);
+        this.saveEvents(evts);
+        return evts;
     }
 };

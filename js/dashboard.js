@@ -34,9 +34,10 @@ const dashboard = {
                 <td style="padding: 1rem; font-weight: 600;">${this.calculateTotalPoints(a)} p</td>
                 <td style="padding: 1rem;">
                     ${app.isAdmin ? `
-                        <div style="display: flex; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                             <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="dashboard.openEvaluation(${a.id})">Evaluare</button>
-                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(14, 165, 233, 0.1); color: var(--primary);" onclick="dashboard.openHistory(${a.id})">Vezi Istoric</button>
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(14, 165, 233, 0.1); color: var(--primary);" onclick="dashboard.openHistory(${a.id})">Istoric</button>
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(16, 185, 129, 0.1); color: #10b981;" onclick="events.openAssign(${a.id})"><i class="fas fa-star" style="margin-right: 0.3rem;"></i>Puncte</button>
                         </div>
                     ` : ''}
                 </td>
@@ -299,7 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Escape key closes modals
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if (!document.getElementById('history-modal').classList.contains('hidden')) {
+            if (!document.getElementById('assign-points-modal').classList.contains('hidden')) {
+                events.closeAssign();
+            } else if (!document.getElementById('event-modal').classList.contains('hidden')) {
+                events.closeModal();
+            } else if (!document.getElementById('history-modal').classList.contains('hidden')) {
                 dashboard.closeHistory();
             } else if (!document.getElementById('evaluation-modal').classList.contains('hidden')) {
                 dashboard.closeEvaluation();
