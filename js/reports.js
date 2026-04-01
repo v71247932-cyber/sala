@@ -240,6 +240,11 @@ const reports = {
         </div>`;
 
         this._openEmail(athlete.email, `Ne e dor de tine, ${athlete.name}! 😢`, html);
+
+        // Mark as notified — hide from inactive list for 7 days
+        storage.updateAthlete(athleteId, { inactivity_email_sent: new Date().toISOString() });
+        this.renderTodo();
+        app.showToast(`Email de inactivitate trimis către ${athlete.name}`);
     },
 
     renderTodo() {
@@ -247,7 +252,12 @@ const reports = {
         const now = new Date();
 
         // Inactive: no login for 7+ days (or never logged in via /start)
+        // Exclude athletes who received inactivity email in the last 7 days
         const inactive = athletes.filter(a => {
+            if (a.inactivity_email_sent) {
+                const daysSinceEmail = (now - new Date(a.inactivity_email_sent)) / (1000 * 60 * 60 * 24);
+                if (daysSinceEmail < 7) return false;
+            }
             if (!a.last_start_login) return true;
             const days = (now - new Date(a.last_start_login)) / (1000 * 60 * 60 * 24);
             return days >= 7;
