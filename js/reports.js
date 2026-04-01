@@ -51,43 +51,42 @@ const reports = {
     // Build HTML points breakdown table for an athlete
     _buildBreakdownTableHtml(athlete) {
         const m = athlete.metrics || {};
-        const rows = [
-            ['Flotări', `${m.push_ups || 0} nr`, '× 2p', `${Math.round((m.push_ups || 0) * 2)}p`],
-            ['Plank', `${m.plank || 0} sec`, '× 1p', `${Math.round((m.plank || 0) * 1)}p`],
-            ['Săritura în lungime', `${m.long_jump || 0} cm`, '× 0.5p', `${Math.round((m.long_jump || 0) * 0.5)}p`],
-            ['Timp agățat', `${m.hang_time || 0} sec`, '× 2p', `${Math.round((m.hang_time || 0) * 2)}p`],
-            ['Forța strângerii', `${m.grip_strength || 0} kg`, '× 2p', `${Math.round((m.grip_strength || 0) * 2)}p`],
-            ['Forța loviturii', `${m.punch_force || 0} kgf`, '× 0.5p', `${Math.round((m.punch_force || 0) * 0.5)}p`],
-            ['Evenimente (prezențe, etc.)', '', '', `${athlete.points || 0}p`],
+        const bars = [
+            { label: 'Flotări', pts: Math.round((m.push_ups || 0) * 2), val: `${m.push_ups || 0} nr`, color: '#eab308' },
+            { label: 'Plank', pts: Math.round((m.plank || 0) * 1), val: `${m.plank || 0} sec`, color: '#10b981' },
+            { label: 'Săritură', pts: Math.round((m.long_jump || 0) * 0.5), val: `${m.long_jump || 0} cm`, color: '#3b82f6' },
+            { label: 'Agățat', pts: Math.round((m.hang_time || 0) * 2), val: `${m.hang_time || 0} sec`, color: '#ef4444' },
+            { label: 'Strângere', pts: Math.round((m.grip_strength || 0) * 2), val: `${m.grip_strength || 0} kg`, color: '#8b5cf6' },
+            { label: 'Lovitură', pts: Math.round((m.punch_force || 0) * 0.5), val: `${m.punch_force || 0} kgf`, color: '#f97316' },
+            { label: 'Evenimente', pts: athlete.points || 0, val: '', color: '#0ea5e9' },
         ];
 
-        let rowsHtml = '';
-        rows.forEach(([label, val, mult, pts], i) => {
-            const bg = i % 2 === 0 ? '#ffffff' : '#f9fafb';
-            rowsHtml += `<tr style="background:${bg};">
-                <td style="padding:8px 14px;">${label}</td>
-                <td style="padding:8px 14px;text-align:center;color:#64748b;">${val}</td>
-                <td style="padding:8px 14px;text-align:center;color:#64748b;">${mult}</td>
-                <td style="padding:8px 14px;text-align:center;font-weight:bold;color:#0ea5e9;">${pts}</td>
-            </tr>`;
-        });
+        const maxPts = Math.max(...bars.map(b => b.pts), 1);
 
-        return `<table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;font-family:Arial,sans-serif;font-size:14px;">
-            <thead>
-                <tr style="background:#f1f5f9;">
-                    <th style="padding:10px 14px;text-align:left;">Probă</th>
-                    <th style="padding:10px 14px;text-align:center;">Valoare</th>
-                    <th style="padding:10px 14px;text-align:center;">Multiplicator</th>
-                    <th style="padding:10px 14px;text-align:center;">Puncte</th>
-                </tr>
-            </thead>
-            <tbody>${rowsHtml}</tbody>
-            <tfoot>
-                <tr style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;">
-                    <td colspan="3" style="padding:10px 14px;font-weight:bold;">TOTAL</td>
-                    <td style="padding:10px 14px;text-align:center;font-weight:bold;font-size:16px;">${dashboard.calculateTotalPoints(athlete)} p</td>
-                </tr>
-            </tfoot>
+        let barsHtml = bars.map(b => {
+            const pct = Math.round((b.pts / maxPts) * 100);
+            return `<tr>
+                <td style="padding:6px 0;font-size:13px;color:#334155;white-space:nowrap;width:80px;">${b.label}</td>
+                <td style="padding:6px 8px;width:100%;">
+                    <div style="background:#f1f5f9;border-radius:6px;overflow:hidden;height:24px;">
+                        <div style="background:${b.color};height:24px;width:${pct}%;border-radius:6px;min-width:${b.pts > 0 ? '20px' : '0'};">
+                        </div>
+                    </div>
+                </td>
+                <td style="padding:6px 0;font-size:13px;font-weight:bold;color:${b.color};text-align:right;white-space:nowrap;width:60px;">${b.pts}p</td>
+            </tr>`;
+        }).join('');
+
+        return `<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">
+            <tbody>${barsHtml}</tbody>
+            <tr>
+                <td colspan="3" style="padding:12px 0 0;">
+                    <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;">
+                        <span style="font-weight:bold;">TOTAL</span>
+                        <span style="font-weight:bold;font-size:16px;">${dashboard.calculateTotalPoints(athlete)} p</span>
+                    </div>
+                </td>
+            </tr>
         </table>`;
     },
 
