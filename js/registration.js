@@ -85,7 +85,13 @@ const registration = {
 
     closeSuccess() {
         document.getElementById('success-modal').classList.add('hidden');
-        app.showSection('dashboard');
+        // If came from public signup (/nou), redirect to TV leaderboard
+        const path = window.location.pathname;
+        if (path === '/nou' || path === '/start' || path.endsWith('/nou') || path.endsWith('/start')) {
+            window.location.href = '/';
+        } else {
+            app.showSection('dashboard');
+        }
     },
 
     handlePublicSignup() {

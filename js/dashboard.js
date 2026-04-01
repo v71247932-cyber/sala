@@ -9,7 +9,7 @@ const dashboard = {
         }
 
         if (athletes.length === 0) {
-            listContainer.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-muted);">Niciun sportiv înregistrat încă.</td></tr>';
+            listContainer.innerHTML = '<tr><td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">Niciun sportiv înregistrat încă.</td></tr>';
             return;
         }
 
@@ -25,11 +25,6 @@ const dashboard = {
                 <td style="padding: 1rem;">
                     <div style="font-size: 0.9rem;">${a.phone}</div>
                     <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
-                </td>
-                <td style="padding: 1rem;">
-                    <span class="badge" style="background: ${a.active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${a.active ? '#10b981' : '#ef4444'}; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.8rem;">
-                        ${a.active ? 'Activ' : 'Inactiv'}
-                    </span>
                 </td>
                 <td style="padding: 1rem; font-weight: 600;">${this.calculateTotalPoints(a)} p</td>
                 <td style="padding: 1rem;">

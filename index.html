@@ -95,18 +95,61 @@
                 <div id="tv-personal-metrics" style="display: flex; gap: 0.75rem; flex-wrap: wrap;"></div>
             </div>
 
+            <!-- History Table -->
+            <div class="card" style="max-width: 1200px; margin: 0 auto 1.5rem; padding: 1.5rem 2rem;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted);">
+                                <th style="padding: 0.75rem;">Data</th>
+                                <th style="padding: 0.75rem;">Flotări</th>
+                                <th style="padding: 0.75rem;">Plank (s)</th>
+                                <th style="padding: 0.75rem;">Săritură (cm)</th>
+                                <th style="padding: 0.75rem;">Agățat (s)</th>
+                                <th style="padding: 0.75rem;">Strângere (kg)</th>
+                                <th style="padding: 0.75rem;">Lovitură (kgf)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tv-history-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Charts -->
             <div class="card" style="max-width: 1200px; margin: 0 auto; padding: 1.5rem 2rem;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                    <div><h4 style="margin-bottom: 0.5rem; color: #eab308;">Flotări</h4><div style="height: 160px;"><canvas id="tv-chart-pushups"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #10b981;">Plank (s)</h4><div style="height: 160px;"><canvas id="tv-chart-plank"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #3b82f6;">Săritură (cm)</h4><div style="height: 160px;"><canvas id="tv-chart-jump"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #ef4444;">Agățat (s)</h4><div style="height: 160px;"><canvas id="tv-chart-hang"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #8b5cf6;">Strângere (kg)</h4><div style="height: 160px;"><canvas id="tv-chart-grip"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #f97316;">Lovitură (kgf)</h4><div style="height: 160px;"><canvas id="tv-chart-punch"></canvas></div></div>
-                    <div style="grid-column: 1 / -1;"><h4 style="margin-bottom: 0.5rem; color: #0ea5e9;">Scor General</h4><div style="height: 200px;"><canvas id="tv-chart-overall"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #eab308;">Flotări</h4><div style="height: 180px;"><canvas id="tv-chart-pushups"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #10b981;">Plank (s)</h4><div style="height: 180px;"><canvas id="tv-chart-plank"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #3b82f6;">Săritură (cm)</h4><div style="height: 180px;"><canvas id="tv-chart-jump"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #ef4444;">Agățat (s)</h4><div style="height: 180px;"><canvas id="tv-chart-hang"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #8b5cf6;">Strângere (kg)</h4><div style="height: 180px;"><canvas id="tv-chart-grip"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #f97316;">Lovitură (kgf)</h4><div style="height: 180px;"><canvas id="tv-chart-punch"></canvas></div></div>
+                    <div style="grid-column: 1 / -1;"><h4 style="margin-bottom: 0.5rem; color: #0ea5e9;">Scor General</h4><div style="height: 220px;"><canvas id="tv-chart-overall"></canvas></div></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Code Recovery Screen -->
+    <div id="cod-screen" class="section hidden"
+        style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%);">
+        <div class="card" style="width: 100%; max-width: 420px; text-align: center;">
+            <div class="logo" style="font-size: 2.5rem; margin-bottom: 1.5rem;">FitGo</div>
+            <i class="fas fa-key" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+            <h2 style="margin-bottom: 0.5rem;">Recuperare Cod</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Introdu adresa de email cu care te-ai înregistrat și vei primi codul tău de 4 cifre.</p>
+            <div class="form-group" style="text-align: left;">
+                <label>Email</label>
+                <input type="email" id="cod-email" placeholder="email@exemplu.com">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="app.recoverCode()">Trimite Codul</button>
+            <div id="cod-result" class="hidden" style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(14,165,233,0.1); border-radius: 0.75rem; border: 1px solid rgba(14,165,233,0.3);">
+                <p style="color: var(--text-muted); margin-bottom: 0.5rem;">Codul tău unic este:</p>
+                <div id="cod-display" style="font-size: 3rem; font-weight: 800; letter-spacing: 0.5rem; color: var(--primary);">0000</div>
+            </div>
+            <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.85rem;">
+                <a href="/" style="color: var(--primary); text-decoration: none;"><i class="fas fa-arrow-left" style="margin-right: 0.3rem;"></i> Înapoi la clasament</a>
+            </p>
         </div>
     </div>
 
@@ -234,7 +277,6 @@
                                     <th style="padding: 1rem;">Sportiv</th>
                                     <th style="padding: 1rem;">Obiectiv</th>
                                     <th style="padding: 1rem;">Contact</th>
-                                    <th style="padding: 1rem;">Abonament</th>
                                     <th style="padding: 1rem;">Puncte</th>
                                     <th style="padding: 1rem;">Acțiuni</th>
                                 </tr>

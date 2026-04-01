@@ -21,6 +21,8 @@ const app = {
             this.currentRoute = 'start';
         } else if (path === '/nou' || path.endsWith('/nou') || path.endsWith('/nou/') || hash === '#/nou' || hash === '#nou' || params.get('page') === 'nou') {
             this.currentRoute = 'nou';
+        } else if (path === '/cod' || path.endsWith('/cod') || path.endsWith('/cod/') || hash === '#/cod' || hash === '#cod' || params.get('page') === 'cod') {
+            this.currentRoute = 'cod';
         } else if (path === '/admin' || path.endsWith('/admin') || path.endsWith('/admin/') || hash === '#/admin' || hash === '#admin' || params.get('page') === 'admin') {
             this.currentRoute = 'main';
         } else if (path === '/' || path === '' || path === '/index.html') {
@@ -76,17 +78,23 @@ const app = {
         const startScreen = document.getElementById('start-screen');
         const mainApp = document.getElementById('main-app');
         const tvScreen = document.getElementById('tv-screen');
+        const codScreen = document.getElementById('cod-screen');
         const navReg = document.getElementById('nav-registration-link');
         const navEvents = document.getElementById('nav-events-link');
         const navTop10 = document.getElementById('nav-top10-link');
         const navTodo = document.getElementById('nav-todo-link');
 
         // Reset visibility
-        [authScreen, startScreen, mainApp, tvScreen].forEach(s => s?.classList.add('hidden'));
+        [authScreen, startScreen, mainApp, tvScreen, codScreen].forEach(s => s?.classList.add('hidden'));
 
         if (this.currentRoute === 'tv') {
             tvScreen?.classList.remove('hidden');
             tv.init();
+            return;
+        }
+
+        if (this.currentRoute === 'cod') {
+            codScreen?.classList.remove('hidden');
             return;
         }
 
@@ -236,6 +244,23 @@ const app = {
             app.showToast('Cod incorect! Verifică codul primit la înregistrare.', 'error');
             input.value = '';
         }
+    },
+
+    recoverCode() {
+        const email = document.getElementById('cod-email').value.trim().toLowerCase();
+        if (!email) {
+            this.showToast('Introdu adresa de email!', 'error');
+            return;
+        }
+        const athletes = storage.getAthletes();
+        const athlete = athletes.find(a => a.email && a.email.toLowerCase() === email);
+        if (!athlete || !athlete.unique_code) {
+            this.showToast('Nu am găsit niciun cont cu acest email!', 'error');
+            return;
+        }
+        document.getElementById('cod-display').textContent = athlete.unique_code;
+        document.getElementById('cod-result').classList.remove('hidden');
+        this.showToast('Codul tău a fost găsit!');
     },
 
     showToast(message, type = 'success') {
