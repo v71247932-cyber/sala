@@ -51,43 +51,78 @@ const reports = {
     // Build HTML points breakdown table for an athlete
     _buildBreakdownTableHtml(athlete) {
         const m = athlete.metrics || {};
-        const bars = [
-            { label: 'Flotări', pts: Math.round((m.push_ups || 0) * 2), val: `${m.push_ups || 0} nr`, color: '#eab308' },
-            { label: 'Plank', pts: Math.round((m.plank || 0) * 1), val: `${m.plank || 0} sec`, color: '#10b981' },
-            { label: 'Săritură', pts: Math.round((m.long_jump || 0) * 0.5), val: `${m.long_jump || 0} cm`, color: '#3b82f6' },
-            { label: 'Agățat', pts: Math.round((m.hang_time || 0) * 2), val: `${m.hang_time || 0} sec`, color: '#ef4444' },
-            { label: 'Strângere', pts: Math.round((m.grip_strength || 0) * 2), val: `${m.grip_strength || 0} kg`, color: '#8b5cf6' },
-            { label: 'Lovitură', pts: Math.round((m.punch_force || 0) * 0.5), val: `${m.punch_force || 0} kgf`, color: '#f97316' },
-            { label: 'Evenimente', pts: athlete.points || 0, val: '', color: '#0ea5e9' },
-        ];
+        const totalPts = dashboard.calculateTotalPoints(athlete);
 
-        const maxPts = Math.max(...bars.map(b => b.pts), 1);
+        // Build history line chart
+        let history = athlete.evaluation_history || [];
+        if (history.length === 0 && m) {
+            const now = new Date();
+            const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            history = [{ month: monthKey, ...m }];
+        }
+        history.sort((a, b) => a.month.localeCompare(b.month));
 
-        let barsHtml = bars.map(b => {
-            const pct = Math.round((b.pts / maxPts) * 100);
-            return `<tr>
-                <td style="padding:6px 0;font-size:13px;color:#334155;white-space:nowrap;width:80px;">${b.label}</td>
-                <td style="padding:6px 8px;width:100%;">
-                    <div style="background:#f1f5f9;border-radius:6px;overflow:hidden;height:24px;">
-                        <div style="background:${b.color};height:24px;width:${pct}%;border-radius:6px;min-width:${b.pts > 0 ? '20px' : '0'};">
-                        </div>
-                    </div>
-                </td>
-                <td style="padding:6px 0;font-size:13px;font-weight:bold;color:${b.color};text-align:right;white-space:nowrap;width:60px;">${b.pts}p</td>
-            </tr>`;
+        const monthNames = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const chartHeight = 140;
+
+        // Calculate overall scores per month
+        const scores = history.map(h => {
+            let total = 0;
+            total += (h.push_ups || 0) * 2;
+            total += (h.plank || 0) * 1;
+            total += (h.long_jump || 0) * 0.5;
+            total += (h.hang_time || 0) * 2;
+            total += (h.grip_strength || 0) * 2;
+            total += (h.punch_force || 0) * 0.5;
+            return Math.round(total);
+        });
+        const maxScore = Math.max(...scores, 1);
+
+        // Build vertical bar columns that simulate a line chart
+        const colWidth = Math.floor(100 / Math.max(history.length, 1));
+        let columnsHtml = history.map((h, i) => {
+            const [year, month] = h.month.split('-');
+            const label = `${monthNames[parseInt(month) - 1]}`;
+            const score = scores[i];
+            const barH = Math.round((score / maxScore) * chartHeight);
+            const topPad = chartHeight - barH;
+
+            return `<td style="vertical-align:bottom;text-align:center;padding:0 2px;width:${colWidth}%;">
+                <div style="font-size:11px;font-weight:bold;color:#0284c7;margin-bottom:2px;">${score}p</div>
+                <div style="background:linear-gradient(180deg,#0ea5e9,#0284c7);height:${barH}px;border-radius:4px 4px 0 0;min-height:4px;"></div>
+                <div style="font-size:10px;color:#64748b;margin-top:4px;">${label}</div>
+            </td>`;
         }).join('');
 
-        return `<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">
-            <tbody>${barsHtml}</tbody>
-            <tr>
-                <td colspan="3" style="padding:12px 0 0;">
-                    <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;">
-                        <span style="font-weight:bold;">TOTAL</span>
-                        <span style="font-weight:bold;font-size:16px;">${dashboard.calculateTotalPoints(athlete)} p</span>
-                    </div>
-                </td>
-            </tr>
-        </table>`;
+        // Metric summary badges
+        const metrics = [
+            { label: 'Flotări', pts: Math.round((m.push_ups || 0) * 2), color: '#eab308' },
+            { label: 'Plank', pts: Math.round((m.plank || 0) * 1), color: '#10b981' },
+            { label: 'Săritură', pts: Math.round((m.long_jump || 0) * 0.5), color: '#3b82f6' },
+            { label: 'Agățat', pts: Math.round((m.hang_time || 0) * 2), color: '#ef4444' },
+            { label: 'Strângere', pts: Math.round((m.grip_strength || 0) * 2), color: '#8b5cf6' },
+            { label: 'Lovitură', pts: Math.round((m.punch_force || 0) * 0.5), color: '#f97316' },
+        ];
+        const badgesHtml = metrics.map(b =>
+            `<span style="display:inline-block;background:#f8fafc;border:1px solid #e2e8f0;padding:4px 10px;border-radius:6px;font-size:12px;margin:2px;">${b.label}: <strong style="color:${b.color};">${b.pts}p</strong></span>`
+        ).join(' ');
+
+        return `
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;">
+                <div style="font-size:13px;color:#64748b;margin-bottom:8px;text-align:center;">Evoluție scor metrici</div>
+                <table style="width:100%;border-collapse:collapse;height:${chartHeight + 40}px;">
+                    <tr>${columnsHtml}</tr>
+                </table>
+            </div>
+            <div style="margin-bottom:12px;">${badgesHtml}
+                <span style="display:inline-block;background:#f0f9ff;border:1px solid #bae6fd;padding:4px 10px;border-radius:6px;font-size:12px;margin:2px;">Evenimente: <strong style="color:#0ea5e9;">${athlete.points || 0}p</strong></span>
+            </div>
+            <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;padding:12px 16px;border-radius:8px;font-family:Arial,sans-serif;">
+                <table style="width:100%;"><tr>
+                    <td style="font-weight:bold;font-size:14px;color:white;">TOTAL</td>
+                    <td style="font-weight:bold;font-size:18px;color:white;text-align:right;">${totalPts} p</td>
+                </tr></table>
+            </div>`;
     },
 
     sendMonthlyReport(athleteId) {
