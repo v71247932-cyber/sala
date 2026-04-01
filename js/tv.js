@@ -5,10 +5,10 @@ const tv = {
 
     categories: [
         { key: 'overall', title: 'Top 10 - General', color: '#0ea5e9', icon: 'fa-trophy' },
-        { key: 'push_ups', title: 'Top 10 - Flotări', color: '#eab308', icon: 'fa-dumbbell', unit: 'nr', multiplier: 2 },
-        { key: 'plank', title: 'Top 10 - Plank', color: '#10b981', icon: 'fa-stopwatch', unit: 'sec', multiplier: 1 },
+        { key: 'push_ups', title: 'Top 10 - Flotări', color: '#eab308', icon: 'fa-dumbbell', unit: 'flotări', multiplier: 2 },
+        { key: 'plank', title: 'Top 10 - Plank', color: '#10b981', icon: 'fa-stopwatch', unit: 'secunde', multiplier: 1 },
         { key: 'long_jump', title: 'Top 10 - Săritură', color: '#3b82f6', icon: 'fa-ruler', unit: 'cm', multiplier: 0.5 },
-        { key: 'hang_time', title: 'Top 10 - Timp Agățat', color: '#ef4444', icon: 'fa-hand-rock', unit: 'sec', multiplier: 2 },
+        { key: 'hang_time', title: 'Top 10 - Timp Agățat', color: '#ef4444', icon: 'fa-hand-rock', unit: 'secunde', multiplier: 2 },
         { key: 'grip_strength', title: 'Top 10 - Forța Strângerii', color: '#8b5cf6', icon: 'fa-hand-fist', unit: 'kg', multiplier: 2 },
         { key: 'punch_force', title: 'Top 10 - Forța Loviturii', color: '#f97316', icon: 'fa-hand-back-fist', unit: 'kgf', multiplier: 0.5 }
     ],
