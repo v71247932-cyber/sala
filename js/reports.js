@@ -94,27 +94,51 @@ const reports = {
             </td>`;
         }).join('');
 
-        // Metric summary badges
-        const metrics = [
-            { label: 'Flotări', pts: Math.round((m.push_ups || 0) * 2), color: '#eab308' },
-            { label: 'Plank', pts: Math.round((m.plank || 0) * 1), color: '#10b981' },
-            { label: 'Săritură', pts: Math.round((m.long_jump || 0) * 0.5), color: '#3b82f6' },
-            { label: 'Agățat', pts: Math.round((m.hang_time || 0) * 2), color: '#ef4444' },
-            { label: 'Strângere', pts: Math.round((m.grip_strength || 0) * 2), color: '#8b5cf6' },
-            { label: 'Lovitură', pts: Math.round((m.punch_force || 0) * 0.5), color: '#f97316' },
+        // Per-metric mini charts
+        const metricDefs = [
+            { key: 'push_ups', label: 'Flotări', unit: 'nr', color: '#eab308', mult: 2 },
+            { key: 'plank', label: 'Plank', unit: 's', color: '#10b981', mult: 1 },
+            { key: 'long_jump', label: 'Săritură', unit: 'cm', color: '#3b82f6', mult: 0.5 },
+            { key: 'hang_time', label: 'Agățat', unit: 's', color: '#ef4444', mult: 2 },
+            { key: 'grip_strength', label: 'Strângere', unit: 'kg', color: '#8b5cf6', mult: 2 },
+            { key: 'punch_force', label: 'Lovitură', unit: 'kgf', color: '#f97316', mult: 0.5 },
         ];
-        const badgesHtml = metrics.map(b =>
-            `<span style="display:inline-block;background:#f8fafc;border:1px solid #e2e8f0;padding:4px 10px;border-radius:6px;font-size:12px;margin:2px;">${b.label}: <strong style="color:${b.color};">${b.pts}p</strong></span>`
-        ).join(' ');
+
+        const miniChartHeight = 60;
+        const metricCells = metricDefs.map(md => {
+            const vals = history.map(h => h[md.key] || 0);
+            const maxVal = Math.max(...vals, 1);
+            const miniCols = history.map(h => {
+                const val = h[md.key] || 0;
+                const barH = Math.round((val / maxVal) * miniChartHeight);
+                return `<td style="vertical-align:bottom;text-align:center;padding:0 1px;">
+                    <div style="font-size:9px;color:#64748b;margin-bottom:1px;">${val}</div>
+                    <div style="background:${md.color};height:${barH}px;border-radius:3px 3px 0 0;min-height:2px;"></div>
+                </td>`;
+            }).join('');
+            const pts = Math.round((m[md.key] || 0) * md.mult);
+            return `<td style="padding:4px;vertical-align:top;width:33%;">
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px;">
+                    <div style="font-size:11px;font-weight:bold;color:${md.color};margin-bottom:4px;">${md.label} <span style="float:right;color:#64748b;font-weight:normal;">${pts}p</span></div>
+                    <table style="width:100%;border-collapse:collapse;height:${miniChartHeight + 15}px;"><tr>${miniCols}</tr></table>
+                </div>
+            </td>`;
+        });
+
+        const metricGridHtml = `<table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+            <tr>${metricCells[0]}${metricCells[1]}${metricCells[2]}</tr>
+            <tr>${metricCells[3]}${metricCells[4]}${metricCells[5]}</tr>
+        </table>`;
 
         return `
             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;">
-                <div style="font-size:13px;color:#64748b;margin-bottom:8px;text-align:center;">Evoluție scor metrici</div>
+                <div style="font-size:13px;color:#64748b;margin-bottom:8px;text-align:center;">Evoluție scor general</div>
                 <table style="width:100%;border-collapse:collapse;height:${chartHeight + 40}px;">
                     <tr>${columnsHtml}</tr>
                 </table>
             </div>
-            <div style="margin-bottom:12px;">${badgesHtml}
+            ${metricGridHtml}
+            <div style="margin-bottom:12px;">
                 <span style="display:inline-block;background:#f0f9ff;border:1px solid #bae6fd;padding:4px 10px;border-radius:6px;font-size:12px;margin:2px;">Evenimente: <strong style="color:#0ea5e9;">${athlete.points || 0}p</strong></span>
             </div>
             <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;padding:12px 16px;border-radius:8px;font-family:Arial,sans-serif;">
