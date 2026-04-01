@@ -139,6 +139,72 @@ const tv = {
             dot.style.background = i === index ? this.categories[i].color : 'rgba(255,255,255,0.2)';
             dot.style.transform = i === index ? 'scale(1.3)' : 'scale(1)';
         });
+
+        // Update next-up sidebar
+        this.updateNextSidebar(index, page);
+    },
+
+    updateNextSidebar(currentIndex, currentPage) {
+        const sorted = this.getSorted(currentIndex);
+        const top50 = sorted.slice(0, 50);
+        const totalPages = Math.max(1, Math.ceil(top50.length / 10));
+
+        // Determine next category
+        let nextIndex;
+        if (currentPage + 1 < totalPages) {
+            nextIndex = currentIndex; // same category, next page
+        } else {
+            nextIndex = (currentIndex + 1) % this.categories.length;
+        }
+        const next = this.categories[nextIndex];
+
+        // Next icon & title
+        const iconEl = document.getElementById('tv-next-icon');
+        const titleEl = document.getElementById('tv-next-title');
+        if (iconEl) iconEl.innerHTML = `<i class="fas ${next.icon}" style="color: ${next.color};"></i>`;
+        if (titleEl) {
+            titleEl.textContent = next.title;
+            titleEl.style.color = next.color;
+        }
+
+        // Top 3 preview for next category
+        const previewEl = document.getElementById('tv-next-preview');
+        if (previewEl) {
+            const nextSorted = this.getSorted(nextIndex);
+            const top3 = nextSorted.slice(0, 3);
+            previewEl.innerHTML = top3.map((a, i) => {
+                const medal = i === 0 ? '#ffd700' : i === 1 ? '#c0c0c0' : '#cd7f32';
+                let val = '';
+                if (next.key === 'overall') {
+                    val = this.calcTotal(a) + 'p';
+                } else {
+                    const raw = (a.metrics || {})[next.key] || 0;
+                    val = raw + ' ' + next.unit;
+                }
+                return `<div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; ${i < 2 ? 'border-bottom: 1px solid rgba(255,255,255,0.05);' : ''}">
+                    <span style="font-weight: 800; color: ${medal}; width: 1.2rem; font-size: 0.9rem;">${i + 1}</span>
+                    <span style="flex: 1; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.name}</span>
+                    <span style="font-size: 0.8rem; color: ${next.color}; font-weight: 600;">${val}</span>
+                </div>`;
+            }).join('');
+        }
+
+        // Full list of all categories
+        const listEl = document.getElementById('tv-next-list');
+        if (listEl) {
+            listEl.innerHTML = this.categories.map((cat, i) => {
+                const isActive = i === currentIndex;
+                const isNext = i === nextIndex && nextIndex !== currentIndex;
+                const bg = isActive ? 'rgba(255,255,255,0.08)' : isNext ? 'rgba(255,255,255,0.04)' : 'transparent';
+                const opacity = isActive ? '1' : '0.6';
+                const label = isActive ? ' ◄' : isNext ? ' ►' : '';
+                return `<div onclick="tv.goTo(${i})" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.5rem; border-radius: 0.4rem; cursor: pointer; background: ${bg}; opacity: ${opacity}; transition: all 0.2s;">
+                    <i class="fas ${cat.icon}" style="color: ${cat.color}; font-size: 0.75rem; width: 1rem; text-align: center;"></i>
+                    <span style="font-size: 0.8rem; flex: 1;">${cat.title.replace('Top 50 - ', '')}</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">${label}</span>
+                </div>`;
+            }).join('');
+        }
     },
 
     // Personal score

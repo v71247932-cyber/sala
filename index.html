@@ -45,18 +45,36 @@
                     </button>
                 </div>
             </div>
-            <div class="card" style="padding: 1rem 2rem; max-width: 1200px; margin: 0 auto;">
-                <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                    <thead>
-                        <tr id="tv-table-header" style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
-                            <th style="padding: 1rem; font-size: 1.1rem; width: 80px;">#</th>
-                            <th style="padding: 1rem; font-size: 1.1rem;">Sportiv</th>
-                            <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Valoare</th>
-                            <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Puncte</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tv-table-body"></tbody>
-                </table>
+            <div style="display: flex; gap: 1.5rem; max-width: 1400px; margin: 0 auto; align-items: flex-start;">
+                <div class="card" style="padding: 1rem 2rem; flex: 1; min-width: 0;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr id="tv-table-header" style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
+                                <th style="padding: 1rem; font-size: 1.1rem; width: 80px;">#</th>
+                                <th style="padding: 1rem; font-size: 1.1rem;">Sportiv</th>
+                                <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Valoare</th>
+                                <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Puncte</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tv-table-body"></tbody>
+                    </table>
+                </div>
+                <!-- Next Up Sidebar -->
+                <div id="tv-next-sidebar" class="card" style="width: 280px; flex-shrink: 0; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.08);">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1rem; color: var(--text-muted); margin-bottom: 0.5rem;">Urmează</div>
+                        <div id="tv-next-icon" style="font-size: 2rem; margin-bottom: 0.5rem;"></div>
+                        <div id="tv-next-title" style="font-size: 1.1rem; font-weight: 700; color: white;"></div>
+                    </div>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05rem; color: var(--text-muted); margin-bottom: 0.5rem;">Top 3 preview</div>
+                        <div id="tv-next-preview"></div>
+                    </div>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.08); margin-top: 0.75rem; padding-top: 0.75rem;">
+                        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05rem; color: var(--text-muted); margin-bottom: 0.5rem;">Toate clasamentele</div>
+                        <div id="tv-next-list"></div>
+                    </div>
+                </div>
             </div>
             <div id="tv-dots" style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem;"></div>
         </div>
