@@ -116,6 +116,126 @@ const tv = {
         });
     },
 
+    // Personal score
+    personalCharts: [],
+
+    showCodeInput() {
+        if (this.interval) clearInterval(this.interval);
+        document.getElementById('tv-code-modal').classList.remove('hidden');
+        const input = document.getElementById('tv-code-input');
+        input.value = '';
+        input.focus();
+    },
+
+    closeCodeInput() {
+        document.getElementById('tv-code-modal').classList.add('hidden');
+        this.startRotation();
+    },
+
+    lookupCode() {
+        const code = document.getElementById('tv-code-input').value;
+        const athlete = this.athletes.find(a => a.unique_code === code);
+
+        if (!athlete) {
+            app.showToast('Cod incorect! Verifică codul primit.', 'error');
+            document.getElementById('tv-code-input').value = '';
+            return;
+        }
+
+        document.getElementById('tv-code-modal').classList.add('hidden');
+        this.showPersonal(athlete);
+    },
+
+    showPersonal(athlete) {
+        if (this.interval) clearInterval(this.interval);
+        document.getElementById('tv-leaderboard').classList.add('hidden');
+        document.getElementById('tv-personal').classList.remove('hidden');
+
+        document.getElementById('tv-personal-name').textContent = athlete.name;
+
+        // Rank
+        const sorted = [...this.athletes].sort((a, b) => this.calcTotal(b) - this.calcTotal(a));
+        const rank = sorted.findIndex(a => a.id === athlete.id) + 1;
+        const totalPoints = this.calcTotal(athlete);
+
+        document.getElementById('tv-personal-rank').innerHTML = `
+            <div style="font-size: 0.9rem; color: var(--text-muted);">Loc în clasament</div>
+            <div style="font-size: 2.5rem; font-weight: 900; color: ${rank <= 3 ? '#ffd700' : 'var(--primary)'};">#${rank}</div>
+        `;
+        document.getElementById('tv-personal-total').innerHTML = `
+            <div style="font-size: 0.9rem; color: var(--text-muted);">Total puncte</div>
+            <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">${totalPoints}p</div>
+        `;
+
+        // Metric badges
+        const m = athlete.metrics || {};
+        const mp = { push_ups: 2, plank: 1, long_jump: 0.5, hang_time: 2, grip_strength: 2, punch_force: 0.5 };
+        const labels = { push_ups: 'Flotări', plank: 'Plank', long_jump: 'Săritură', hang_time: 'Agățat', grip_strength: 'Strângere', punch_force: 'Lovitură' };
+        const metricHtml = Object.entries(mp).map(([key, mult]) => {
+            const val = m[key] || 0;
+            const pts = Math.round(val * mult);
+            return `<span style="background: rgba(14,165,233,0.1); padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem;">${labels[key]}: <b style="color: var(--primary);">${pts}p</b></span>`;
+        }).join('');
+        document.getElementById('tv-personal-metrics').innerHTML = metricHtml;
+
+        // Charts
+        this.personalCharts.forEach(c => c.destroy());
+        this.personalCharts = [];
+
+        let history = athlete.evaluation_history || [];
+        if (history.length === 0 && athlete.metrics) {
+            const now = new Date();
+            const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            history = [{ month: monthKey, ...athlete.metrics }];
+        }
+        history.sort((a, b) => a.month.localeCompare(b.month));
+
+        const monthNames = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const chartLabels = history.map(h => {
+            const [year, month] = h.month.split('-');
+            return `${monthNames[parseInt(month) - 1]} ${year}`;
+        });
+
+        const makeChart = (canvasId, data, color, bgColor) => {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: chartLabels, datasets: [{ data, borderColor: color, backgroundColor: bgColor, tension: 0.45, fill: true, borderWidth: 3, pointRadius: 5, pointBackgroundColor: color }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true } } }
+            });
+            this.personalCharts.push(chart);
+        };
+
+        setTimeout(() => {
+            makeChart('tv-chart-pushups', history.map(h => h.push_ups || 0), '#eab308', 'rgba(234,179,8,0.15)');
+            makeChart('tv-chart-plank', history.map(h => h.plank || 0), '#10b981', 'rgba(16,185,129,0.15)');
+            makeChart('tv-chart-jump', history.map(h => h.long_jump || 0), '#3b82f6', 'rgba(59,130,246,0.15)');
+            makeChart('tv-chart-hang', history.map(h => h.hang_time || 0), '#ef4444', 'rgba(239,68,68,0.15)');
+            makeChart('tv-chart-grip', history.map(h => h.grip_strength || 0), '#8b5cf6', 'rgba(139,92,246,0.15)');
+            makeChart('tv-chart-punch', history.map(h => h.punch_force || 0), '#f97316', 'rgba(249,115,22,0.15)');
+
+            const overallScores = history.map(h => {
+                let total = 0;
+                total += (h.push_ups || 0) * 2;
+                total += (h.plank || 0) * 1;
+                total += (h.long_jump || 0) * 0.5;
+                total += (h.hang_time || 0) * 2;
+                total += (h.grip_strength || 0) * 2;
+                total += (h.punch_force || 0) * 0.5;
+                return Math.round(total);
+            });
+            makeChart('tv-chart-overall', overallScores, '#0ea5e9', 'rgba(14,165,233,0.15)');
+        }, 50);
+    },
+
+    closePersonal() {
+        document.getElementById('tv-personal').classList.add('hidden');
+        document.getElementById('tv-leaderboard').classList.remove('hidden');
+        this.personalCharts.forEach(c => c.destroy());
+        this.personalCharts = [];
+        this.startRotation();
+    },
+
     calcTotal(athlete) {
         if (!athlete) return 0;
         const m = athlete.metrics || {};

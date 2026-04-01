@@ -31,25 +31,83 @@
 
     <!-- TV Display Screen (Public - for TV/Monitor) -->
     <div id="tv-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%); padding: 2rem 3rem; overflow: hidden;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <div class="logo" style="font-size: 3.5rem; margin-bottom: 0.5rem;">FitGo</div>
-            <h1 id="tv-category-title" style="font-size: 2.2rem; font-weight: 800; color: white; margin: 0;">Top 10 - General</h1>
+        <!-- Leaderboard View -->
+        <div id="tv-leaderboard">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                <div style="flex: 1;"></div>
+                <div style="text-align: center; flex: 2;">
+                    <div class="logo" style="font-size: 3.5rem; margin-bottom: 0.5rem;">FitGo</div>
+                    <h1 id="tv-category-title" style="font-size: 2.2rem; font-weight: 800; color: white; margin: 0;">Top 10 - General</h1>
+                </div>
+                <div style="flex: 1; text-align: right;">
+                    <button onclick="tv.showCodeInput()" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-user"></i> Scor Personal
+                    </button>
+                </div>
+            </div>
+            <div class="card" style="padding: 1rem 2rem; max-width: 1200px; margin: 0 auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr id="tv-table-header" style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
+                            <th style="padding: 1rem; font-size: 1.1rem; width: 80px;">#</th>
+                            <th style="padding: 1rem; font-size: 1.1rem;">Sportiv</th>
+                            <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Valoare</th>
+                            <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Puncte</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tv-table-body"></tbody>
+                </table>
+            </div>
+            <div id="tv-dots" style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem;"></div>
         </div>
-        <div class="card" style="padding: 1rem 2rem; max-width: 1200px; margin: 0 auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                    <tr id="tv-table-header" style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
-                        <th style="padding: 1rem; font-size: 1.1rem; width: 80px;">#</th>
-                        <th style="padding: 1rem; font-size: 1.1rem;">Sportiv</th>
-                        <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Valoare</th>
-                        <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Puncte</th>
-                    </tr>
-                </thead>
-                <tbody id="tv-table-body"></tbody>
-            </table>
+
+        <!-- Code Input Modal -->
+        <div id="tv-code-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+            <div class="card" style="width: 90%; max-width: 400px; text-align: center; border: 2px solid var(--primary); padding: 3rem;">
+                <button onclick="tv.closeCodeInput()" style="position: absolute; top: 1rem; right: 1.5rem; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+                <div class="logo" style="font-size: 2.5rem; margin-bottom: 2rem;">FitGo</div>
+                <h2 style="margin-bottom: 1.5rem;">Introdu codul tău</h2>
+                <div class="form-group">
+                    <input type="text" id="tv-code-input" maxlength="4" placeholder="0000"
+                        style="font-size: 3rem; text-align: center; letter-spacing: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border: 2px solid var(--primary); color: var(--primary); font-weight: 800;">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; height: 3.5rem; font-size: 1.1rem; margin-top: 1rem;" onclick="tv.lookupCode()">Vezi Scorul</button>
+            </div>
         </div>
-        <!-- Progress dots -->
-        <div id="tv-dots" style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem;"></div>
+
+        <!-- Personal Stats View -->
+        <div id="tv-personal" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                <button onclick="tv.closePersonal()" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Înapoi
+                </button>
+                <div style="text-align: center;">
+                    <div class="logo" style="font-size: 2.5rem; margin-bottom: 0.25rem;">FitGo</div>
+                    <h1 id="tv-personal-name" style="font-size: 1.8rem; font-weight: 800; color: white; margin: 0;"></h1>
+                </div>
+                <div style="width: 120px;"></div>
+            </div>
+
+            <!-- Points summary -->
+            <div class="card" style="max-width: 1200px; margin: 0 auto 1.5rem; padding: 1.5rem 2rem; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div id="tv-personal-rank" style="text-align: center;"></div>
+                <div id="tv-personal-total" style="text-align: center;"></div>
+                <div id="tv-personal-metrics" style="display: flex; gap: 0.75rem; flex-wrap: wrap;"></div>
+            </div>
+
+            <!-- Charts -->
+            <div class="card" style="max-width: 1200px; margin: 0 auto; padding: 1.5rem 2rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div><h4 style="margin-bottom: 0.5rem; color: #eab308;">Flotări</h4><div style="height: 160px;"><canvas id="tv-chart-pushups"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #10b981;">Plank (s)</h4><div style="height: 160px;"><canvas id="tv-chart-plank"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #3b82f6;">Săritură (cm)</h4><div style="height: 160px;"><canvas id="tv-chart-jump"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #ef4444;">Agățat (s)</h4><div style="height: 160px;"><canvas id="tv-chart-hang"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #8b5cf6;">Strângere (kg)</h4><div style="height: 160px;"><canvas id="tv-chart-grip"></canvas></div></div>
+                    <div><h4 style="margin-bottom: 0.5rem; color: #f97316;">Lovitură (kgf)</h4><div style="height: 160px;"><canvas id="tv-chart-punch"></canvas></div></div>
+                    <div style="grid-column: 1 / -1;"><h4 style="margin-bottom: 0.5rem; color: #0ea5e9;">Scor General</h4><div style="height: 200px;"><canvas id="tv-chart-overall"></canvas></div></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Auth Screen -->
