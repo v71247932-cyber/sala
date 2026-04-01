@@ -21,6 +21,10 @@ const app = {
             this.currentRoute = 'start';
         } else if (path === '/nou' || path.endsWith('/nou') || path.endsWith('/nou/') || hash === '#/nou' || hash === '#nou' || params.get('page') === 'nou') {
             this.currentRoute = 'nou';
+        } else if (path === '/admin' || path.endsWith('/admin') || path.endsWith('/admin/') || hash === '#/admin' || hash === '#admin' || params.get('page') === 'admin') {
+            this.currentRoute = 'main';
+        } else if (path === '/' || path === '' || path === '/index.html') {
+            this.currentRoute = 'tv';
         } else {
             this.currentRoute = 'main';
         }
@@ -58,7 +62,7 @@ const app = {
             console.log('App initialized and view updated');
         });
 
-        // For start/nou routes, don't block on server sync — show immediately
+        // For start/nou/tv routes, don't block on server sync — show immediately
         if (this.currentRoute !== 'main') {
             this.updateView();
             const loader = document.getElementById('loading-screen');
@@ -71,13 +75,20 @@ const app = {
         const authScreen = document.getElementById('auth-screen');
         const startScreen = document.getElementById('start-screen');
         const mainApp = document.getElementById('main-app');
+        const tvScreen = document.getElementById('tv-screen');
         const navReg = document.getElementById('nav-registration-link');
         const navEvents = document.getElementById('nav-events-link');
         const navTop10 = document.getElementById('nav-top10-link');
         const navTodo = document.getElementById('nav-todo-link');
 
         // Reset visibility
-        [authScreen, startScreen, mainApp].forEach(s => s?.classList.add('hidden'));
+        [authScreen, startScreen, mainApp, tvScreen].forEach(s => s?.classList.add('hidden'));
+
+        if (this.currentRoute === 'tv') {
+            tvScreen?.classList.remove('hidden');
+            tv.init();
+            return;
+        }
 
         if (this.currentRoute === 'start') {
             startScreen?.classList.remove('hidden');

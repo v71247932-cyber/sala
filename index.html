@@ -29,6 +29,29 @@
         </style>
     </div>
 
+    <!-- TV Display Screen (Public - for TV/Monitor) -->
+    <div id="tv-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%); padding: 2rem 3rem; overflow: hidden;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="logo" style="font-size: 3.5rem; margin-bottom: 0.5rem;">FitGo</div>
+            <h1 id="tv-category-title" style="font-size: 2.2rem; font-weight: 800; color: white; margin: 0;">Top 10 - General</h1>
+        </div>
+        <div class="card" style="padding: 1rem 2rem; max-width: 1200px; margin: 0 auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr id="tv-table-header" style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
+                        <th style="padding: 1rem; font-size: 1.1rem; width: 80px;">#</th>
+                        <th style="padding: 1rem; font-size: 1.1rem;">Sportiv</th>
+                        <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Valoare</th>
+                        <th style="padding: 1rem; font-size: 1.1rem; text-align: right;">Puncte</th>
+                    </tr>
+                </thead>
+                <tbody id="tv-table-body"></tbody>
+            </table>
+        </div>
+        <!-- Progress dots -->
+        <div id="tv-dots" style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem;"></div>
+    </div>
+
     <!-- Auth Screen -->
     <div id="auth-screen" class="section hidden"
         style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
@@ -550,6 +573,7 @@
     <script src="/js/dashboard.js"></script>
     <script src="/js/events.js"></script>
     <script src="/js/reports.js"></script>
+    <script src="/js/tv.js"></script>
 </body>
 
 </html>
