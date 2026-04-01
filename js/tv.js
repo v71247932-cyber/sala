@@ -151,32 +151,7 @@ const tv = {
         document.getElementById('tv-leaderboard').classList.add('hidden');
         document.getElementById('tv-personal').classList.remove('hidden');
 
-        document.getElementById('tv-personal-name').textContent = athlete.name;
-
-        // Rank
-        const sorted = [...this.athletes].sort((a, b) => this.calcTotal(b) - this.calcTotal(a));
-        const rank = sorted.findIndex(a => a.id === athlete.id) + 1;
-        const totalPoints = this.calcTotal(athlete);
-
-        document.getElementById('tv-personal-rank').innerHTML = `
-            <div style="font-size: 0.9rem; color: var(--text-muted);">Loc în clasament</div>
-            <div style="font-size: 2.5rem; font-weight: 900; color: ${rank <= 3 ? '#ffd700' : 'var(--primary)'};">#${rank}</div>
-        `;
-        document.getElementById('tv-personal-total').innerHTML = `
-            <div style="font-size: 0.9rem; color: var(--text-muted);">Total puncte</div>
-            <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">${totalPoints}p</div>
-        `;
-
-        // Metric badges
-        const m = athlete.metrics || {};
-        const mp = { push_ups: 2, plank: 1, long_jump: 0.5, hang_time: 2, grip_strength: 2, punch_force: 0.5 };
-        const labels = { push_ups: 'Flotări', plank: 'Plank', long_jump: 'Săritură', hang_time: 'Agățat', grip_strength: 'Strângere', punch_force: 'Lovitură' };
-        const metricHtml = Object.entries(mp).map(([key, mult]) => {
-            const val = m[key] || 0;
-            const pts = Math.round(val * mult);
-            return `<span style="background: rgba(14,165,233,0.1); padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem;">${labels[key]}: <b style="color: var(--primary);">${pts}p</b></span>`;
-        }).join('');
-        document.getElementById('tv-personal-metrics').innerHTML = metricHtml;
+        document.getElementById('tv-personal-name').textContent = `Istoric: ${athlete.name}`;
 
         // Charts
         this.personalCharts.forEach(c => c.destroy());

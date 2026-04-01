@@ -76,28 +76,13 @@
         </div>
 
         <!-- Personal Stats View -->
-        <div id="tv-personal" class="hidden">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
-                <button onclick="tv.closePersonal()" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Înapoi
-                </button>
-                <div style="text-align: center;">
-                    <div class="logo" style="font-size: 2.5rem; margin-bottom: 0.25rem;">FitGo</div>
-                    <h1 id="tv-personal-name" style="font-size: 1.8rem; font-weight: 800; color: white; margin: 0;"></h1>
+        <div id="tv-personal" class="hidden" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem;">
+            <div class="card" style="width: 95%; max-width: 900px; max-height: 90vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 id="tv-personal-name" style="margin: 0;">Istoric Evaluări</h2>
+                    <button class="btn btn-secondary" onclick="tv.closePersonal()" style="padding: 0.4rem 0.8rem;">&times;</button>
                 </div>
-                <div style="width: 120px;"></div>
-            </div>
-
-            <!-- Points summary -->
-            <div class="card" style="max-width: 1200px; margin: 0 auto 1.5rem; padding: 1.5rem 2rem; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <div id="tv-personal-rank" style="text-align: center;"></div>
-                <div id="tv-personal-total" style="text-align: center;"></div>
-                <div id="tv-personal-metrics" style="display: flex; gap: 0.75rem; flex-wrap: wrap;"></div>
-            </div>
-
-            <!-- History Table -->
-            <div class="card" style="max-width: 1200px; margin: 0 auto 1.5rem; padding: 1.5rem 2rem;">
-                <div style="overflow-x: auto;">
+                <div style="overflow-x: auto; margin-bottom: 2rem;">
                     <table style="width: 100%; border-collapse: collapse; text-align: center;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border); color: var(--text-muted);">
@@ -113,18 +98,35 @@
                         <tbody id="tv-history-table-body"></tbody>
                     </table>
                 </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="card" style="max-width: 1200px; margin: 0 auto; padding: 1.5rem 2rem;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                    <div><h4 style="margin-bottom: 0.5rem; color: #eab308;">Flotări</h4><div style="height: 180px;"><canvas id="tv-chart-pushups"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #10b981;">Plank (s)</h4><div style="height: 180px;"><canvas id="tv-chart-plank"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #3b82f6;">Săritură (cm)</h4><div style="height: 180px;"><canvas id="tv-chart-jump"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #ef4444;">Agățat (s)</h4><div style="height: 180px;"><canvas id="tv-chart-hang"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #8b5cf6;">Strângere (kg)</h4><div style="height: 180px;"><canvas id="tv-chart-grip"></canvas></div></div>
-                    <div><h4 style="margin-bottom: 0.5rem; color: #f97316;">Lovitură (kgf)</h4><div style="height: 180px;"><canvas id="tv-chart-punch"></canvas></div></div>
-                    <div style="grid-column: 1 / -1;"><h4 style="margin-bottom: 0.5rem; color: #0ea5e9;">Scor General</h4><div style="height: 220px;"><canvas id="tv-chart-overall"></canvas></div></div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #eab308;">Flotări</h4>
+                        <div style="height: 180px;"><canvas id="tv-chart-pushups"></canvas></div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #10b981;">Plank (s)</h4>
+                        <div style="height: 180px;"><canvas id="tv-chart-plank"></canvas></div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #3b82f6;">Săritură (cm)</h4>
+                        <div style="height: 180px;"><canvas id="tv-chart-jump"></canvas></div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #ef4444;">Agățat (s)</h4>
+                        <div style="height: 180px;"><canvas id="tv-chart-hang"></canvas></div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #8b5cf6;">Strângere (kg)</h4>
+                        <div style="height: 180px;"><canvas id="tv-chart-grip"></canvas></div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #f97316;">Lovitură (kgf)</h4>
+                        <div style="height: 180px;"><canvas id="tv-chart-punch"></canvas></div>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <h4 style="margin-bottom: 0.5rem; color: #0ea5e9;">Scor General</h4>
+                        <div style="height: 220px;"><canvas id="tv-chart-overall"></canvas></div>
+                    </div>
                 </div>
             </div>
         </div>
