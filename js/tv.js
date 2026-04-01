@@ -2,6 +2,36 @@ const tv = {
     currentIndex: 0,
     interval: null,
     athletes: [],
+    currentAgeGroup: 'all',
+
+    ageGroups: [
+        { key: 'all', label: 'Toate vârstele', min: 0, max: 999 },
+        { key: '6-12', label: '6-12 ani', min: 6, max: 12 },
+        { key: '13-17', label: '13-17 ani', min: 13, max: 17 },
+        { key: '18-30', label: '18-30 ani', min: 18, max: 30 },
+        { key: '31-45', label: '31-45 ani', min: 31, max: 45 },
+        { key: '46+', label: '46+ ani', min: 46, max: 999 }
+    ],
+
+    calculateAge(dob) {
+        if (!dob) return null;
+        const birth = new Date(dob);
+        const now = new Date();
+        let age = now.getFullYear() - birth.getFullYear();
+        const m = now.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+        return age;
+    },
+
+    getFilteredAthletes() {
+        if (this.currentAgeGroup === 'all') return this.athletes;
+        const group = this.ageGroups.find(g => g.key === this.currentAgeGroup);
+        if (!group) return this.athletes;
+        return this.athletes.filter(a => {
+            const age = this.calculateAge(a.dob);
+            return age !== null && age >= group.min && age <= group.max;
+        });
+    },
 
     categories: [
         { key: 'overall', title: 'Top 50 - General', color: '#0ea5e9', icon: 'fa-trophy' },
@@ -17,6 +47,7 @@ const tv = {
     async init() {
         await this.loadData();
         this.renderDots();
+        this.renderAgeFilter();
         this.currentPage = 0;
         this.showCategory(0, 0);
         this.startRotation();
@@ -63,10 +94,11 @@ const tv = {
 
     getSorted(index) {
         const cat = this.categories[index];
+        const filtered = this.getFilteredAthletes();
         if (cat.key === 'overall') {
-            return [...this.athletes].sort((a, b) => this.calcTotal(b) - this.calcTotal(a));
+            return [...filtered].sort((a, b) => this.calcTotal(b) - this.calcTotal(a));
         } else {
-            return [...this.athletes].sort((a, b) => ((b.metrics || {})[cat.key] || 0) - ((a.metrics || {})[cat.key] || 0));
+            return [...filtered].sort((a, b) => ((b.metrics || {})[cat.key] || 0) - ((a.metrics || {})[cat.key] || 0));
         }
     },
 
@@ -75,6 +107,34 @@ const tv = {
         container.innerHTML = this.categories.map((cat, i) =>
             `<div class="tv-dot" data-index="${i}" style="width: 12px; height: 12px; border-radius: 50%; background: ${i === 0 ? cat.color : 'rgba(255,255,255,0.2)'}; transition: all 0.3s ease; cursor: pointer;" onclick="tv.goTo(${i})"></div>`
         ).join('');
+    },
+
+    renderAgeFilter() {
+        const container = document.getElementById('tv-age-filter');
+        if (!container) return;
+        container.innerHTML = this.ageGroups.map(g => {
+            const isActive = g.key === this.currentAgeGroup;
+            return `<button onclick="tv.setAgeGroup('${g.key}')" style="
+                padding: 0.4rem 0.9rem;
+                border-radius: 2rem;
+                border: 1px solid ${isActive ? '#0ea5e9' : 'rgba(255,255,255,0.15)'};
+                background: ${isActive ? 'linear-gradient(135deg, #0ea5e9, #0284c7)' : 'rgba(255,255,255,0.05)'};
+                color: ${isActive ? 'white' : 'rgba(255,255,255,0.6)'};
+                font-size: 0.85rem;
+                font-weight: ${isActive ? '700' : '500'};
+                cursor: pointer;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+            ">${g.label}</button>`;
+        }).join('');
+    },
+
+    setAgeGroup(key) {
+        this.currentAgeGroup = key;
+        this.currentPage = 0;
+        this.renderAgeFilter();
+        this.showCategory(this.currentIndex, 0);
+        this.startRotation();
     },
 
     goTo(index) {

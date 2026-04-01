@@ -1,4 +1,54 @@
 const reports = {
+    currentAgeGroup: 'all',
+
+    ageGroups: [
+        { key: 'all', label: 'Toate vârstele', min: 0, max: 999 },
+        { key: '6-12', label: '6-12 ani', min: 6, max: 12 },
+        { key: '13-17', label: '13-17 ani', min: 13, max: 17 },
+        { key: '18-30', label: '18-30 ani', min: 18, max: 30 },
+        { key: '31-45', label: '31-45 ani', min: 31, max: 45 },
+        { key: '46+', label: '46+ ani', min: 46, max: 999 }
+    ],
+
+    calculateAge(dob) {
+        if (!dob) return null;
+        const birth = new Date(dob);
+        const now = new Date();
+        let age = now.getFullYear() - birth.getFullYear();
+        const m = now.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+        return age;
+    },
+
+    getFilteredAthletes(athletes) {
+        if (this.currentAgeGroup === 'all') return athletes;
+        const group = this.ageGroups.find(g => g.key === this.currentAgeGroup);
+        if (!group) return athletes;
+        return athletes.filter(a => {
+            const age = this.calculateAge(a.dob);
+            return age !== null && age >= group.min && age <= group.max;
+        });
+    },
+
+    renderAgeFilter() {
+        const container = document.getElementById('top10-age-filter');
+        if (!container) return;
+        container.innerHTML = this.ageGroups.map(g => {
+            const isActive = g.key === this.currentAgeGroup;
+            return `<button onclick="reports.setAgeGroup('${g.key}')" class="btn ${isActive ? 'btn-primary' : 'btn-secondary'}" style="
+                padding: 0.4rem 0.9rem;
+                font-size: 0.85rem;
+                border-radius: 2rem;
+            ">${g.label}</button>`;
+        }).join('');
+    },
+
+    setAgeGroup(key) {
+        this.currentAgeGroup = key;
+        this.renderAgeFilter();
+        this.renderTop10();
+    },
+
     // Helper: copy HTML to clipboard and open Gmail compose
     async _openEmail(to, subject, html) {
         try {
@@ -319,9 +369,11 @@ const reports = {
     },
 
     renderTop10() {
+        this.renderAgeFilter();
         const listContainer = document.getElementById('top10-list');
         const athletes = storage.getAthletes();
-        const sorted = [...athletes].sort((a, b) => dashboard.calculateTotalPoints(b) - dashboard.calculateTotalPoints(a));
+        const filtered = this.getFilteredAthletes(athletes);
+        const sorted = [...filtered].sort((a, b) => dashboard.calculateTotalPoints(b) - dashboard.calculateTotalPoints(a));
         const top10 = sorted.slice(0, 10);
 
         if (top10.length === 0) {
@@ -392,7 +444,8 @@ const reports = {
 
     sendTop10ToAll() {
         const athletes = storage.getAthletes();
-        const sorted = [...athletes].sort((a, b) => dashboard.calculateTotalPoints(b) - dashboard.calculateTotalPoints(a));
+        const filtered = this.getFilteredAthletes(athletes);
+        const sorted = [...filtered].sort((a, b) => dashboard.calculateTotalPoints(b) - dashboard.calculateTotalPoints(a));
         const top10 = sorted.slice(0, 10);
 
         if (top10.length === 0) {
