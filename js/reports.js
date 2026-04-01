@@ -239,7 +239,7 @@ const reports = {
             </div>
         </div>`;
 
-        this._openEmail(athlete.email, `Ne e dor de tine, ${athlete.name}! 😢`, html);
+        this._openEmail(athlete.email, `Ne e dor de tine, ${athlete.name}!`, html);
 
         // Mark as notified — hide from inactive list for 7 days
         storage.updateAthlete(athleteId, { inactivity_email_sent: new Date().toISOString() });
