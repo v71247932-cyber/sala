@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "fitgo-dev",
-      "runtimeExecutable": "php",
-      "runtimeArgs": ["-S", "localhost:8080", "-t", "."],
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8080"],
       "port": 8080
     }
   ]
