@@ -205,7 +205,8 @@ const app = {
         if (athlete) {
             this.isAdmin = false;
             storage.saveCredentials(email, pass, false);
-            this.autoLogin(athlete);
+            window.location.href = '/';
+            return;
         } else {
             app.showToast('Email sau parolă incorectă!', 'error');
         }
