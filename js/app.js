@@ -199,17 +199,8 @@ const app = {
             return;
         }
 
-        const athletes = storage.getAthletes();
-        const athlete = athletes.find(a => a.email === email && a.password === pass);
-
-        if (athlete) {
-            this.isAdmin = false;
-            storage.saveCredentials(email, pass, false);
-            window.location.href = '/';
-            return;
-        } else {
-            app.showToast('Email sau parolă incorectă!', 'error');
-        }
+        // Any other credentials → go to TV page
+        window.location.href = '/';
     },
 
     handleStartLogin() {
