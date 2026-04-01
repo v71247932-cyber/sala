@@ -216,12 +216,9 @@ const reports = {
                 }
                 return `
                 <tr style="border-bottom: 1px solid var(--border);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <td style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <img src="${a.photo || 'https://via.placeholder.com/36'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #ef4444;">
-                        <div>
-                            <div style="font-weight: 600;">${a.name}</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
-                        </div>
+                    <td style="padding: 0.75rem 1rem;">
+                        <div style="font-weight: 600;">${a.name}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
                     </td>
                     <td style="padding: 0.75rem 1rem; color: var(--text-muted);">${lastLoginText}</td>
                     <td style="padding: 0.75rem 1rem;"><span style="color: #ef4444; font-weight: bold;">${daysAbsent} zile</span></td>
@@ -241,10 +238,7 @@ const reports = {
         } else {
             evalList.innerHTML = needsEval.map(a => `
                 <tr style="border-bottom: 1px solid var(--border);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <td style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <img src="${a.photo || 'https://via.placeholder.com/36'}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #f59e0b;">
-                        <div style="font-weight: 600;">${a.name}</div>
-                    </td>
+                    <td style="padding: 0.75rem 1rem; font-weight: 600;">${a.name}</td>
                     <td style="padding: 0.75rem 1rem; color: var(--text-muted);">${a.email}</td>
                     <td style="padding: 0.75rem 1rem;">
                         <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="dashboard.openEvaluation(${a.id})">
@@ -277,12 +271,9 @@ const reports = {
             return `
             <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 1rem; font-weight: bold; font-size: 1.2rem; color: ${index === 0 ? '#ffd700' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : 'var(--text-muted)'}">#${index + 1}</td>
-                <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
-                    <img src="${a.photo || 'https://via.placeholder.com/40'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
-                    <div>
-                        <div style="font-weight: 600;">${a.name}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
-                    </div>
+                <td style="padding: 1rem;">
+                    <div style="font-weight: 600;">${a.name}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
                 </td>
                 <td style="padding: 1rem;">${breakdownHtml || '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>'}</td>
                 <td style="padding: 1rem; font-weight: 600; color: var(--primary); font-size: 1.1rem;">${dashboard.calculateTotalPoints(a)} p</td>
