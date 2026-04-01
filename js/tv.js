@@ -118,9 +118,19 @@ const tv = {
 
     // Personal score
     personalCharts: [],
+    failedAttempts: 0,
+    lockedUntil: null,
 
     showCodeInput() {
         if (this.interval) clearInterval(this.interval);
+
+        // Check if locked
+        if (this.lockedUntil && new Date() < this.lockedUntil) {
+            const remaining = Math.ceil((this.lockedUntil - new Date()) / 60000);
+            app.showToast(`Prea multe încercări! Așteaptă ${remaining} min.`, 'error');
+            return;
+        }
+
         document.getElementById('tv-code-modal').classList.remove('hidden');
         const input = document.getElementById('tv-code-input');
         input.value = '';
@@ -132,16 +142,51 @@ const tv = {
         this.startRotation();
     },
 
-    lookupCode() {
-        const code = document.getElementById('tv-code-input').value;
-        const athlete = this.athletes.find(a => a.unique_code === code);
+    handleCodeInput() {
+        const input = document.getElementById('tv-code-input');
+        const code = input.value;
+        if (code.length === 4) {
+            this.lookupCode();
+        }
+    },
 
-        if (!athlete) {
-            app.showToast('Cod incorect! Verifică codul primit.', 'error');
-            document.getElementById('tv-code-input').value = '';
+    shakeModal() {
+        const card = document.querySelector('#tv-code-modal .card');
+        card.style.animation = 'none';
+        card.offsetHeight; // trigger reflow
+        card.style.animation = 'shake 0.5s ease';
+    },
+
+    lookupCode() {
+        // Check if locked
+        if (this.lockedUntil && new Date() < this.lockedUntil) {
+            const remaining = Math.ceil((this.lockedUntil - new Date()) / 60000);
+            app.showToast(`Prea multe încercări! Așteaptă ${remaining} min.`, 'error');
             return;
         }
 
+        const input = document.getElementById('tv-code-input');
+        const code = input.value;
+        const athlete = this.athletes.find(a => a.unique_code === code);
+
+        if (!athlete) {
+            this.failedAttempts++;
+            this.shakeModal();
+
+            if (this.failedAttempts >= 5) {
+                this.lockedUntil = new Date(Date.now() + 5 * 60 * 1000);
+                app.showToast('Prea multe încercări! Blocat 5 minute.', 'error');
+                this.closeCodeInput();
+                return;
+            }
+
+            app.showToast(`Cod incorect! (${this.failedAttempts}/5)`, 'error');
+            input.value = '';
+            input.focus();
+            return;
+        }
+
+        this.failedAttempts = 0;
         document.getElementById('tv-code-modal').classList.add('hidden');
         this.showPersonal(athlete);
     },

@@ -68,10 +68,9 @@
                 <div class="logo" style="font-size: 2.5rem; margin-bottom: 2rem;">FitGo</div>
                 <h2 style="margin-bottom: 1.5rem;">Introdu codul tău</h2>
                 <div class="form-group">
-                    <input type="text" id="tv-code-input" maxlength="4" placeholder="0000"
+                    <input type="text" id="tv-code-input" maxlength="4" placeholder="0000" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,''); tv.handleCodeInput()"
                         style="font-size: 3rem; text-align: center; letter-spacing: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border: 2px solid var(--primary); color: var(--primary); font-weight: 800;">
                 </div>
-                <button class="btn btn-primary" style="width: 100%; height: 3.5rem; font-size: 1.1rem; margin-top: 1rem;" onclick="tv.lookupCode()">Vezi Scorul</button>
             </div>
         </div>
 

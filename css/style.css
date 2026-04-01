@@ -199,6 +199,13 @@ input:focus, select:focus {
     display: none !important;
 }
 
+/* Shake animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+    20%, 40%, 60%, 80% { transform: translateX(8px); }
+}
+
 /* Responsive Design Queries */
 @media (max-width: 1024px) {
     .app-container {
