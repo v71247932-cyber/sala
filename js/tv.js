@@ -41,7 +41,6 @@ const tv = {
         { key: 'long_jump', title: 'Top 50 - Săritură', color: '#3b82f6', icon: 'fa-ruler', unit: 'cm', multiplier: 0.5 },
         { key: 'hang_time', title: 'Top 50 - Timp Agățat', color: '#ef4444', icon: 'fa-hand-rock', unit: 'secunde', multiplier: 2 },
         { key: 'grip_strength', title: 'Top 50 - Forța Strângerii', color: '#8b5cf6', icon: 'fa-hand-fist', unit: 'kg', multiplier: 2 },
-        { key: 'punch_force', title: 'Top 50 - Forța Loviturii', color: '#f97316', icon: 'fa-hand-back-fist', unit: 'kgf', multiplier: 0.5 }
     ],
     currentPage: 0,
 
