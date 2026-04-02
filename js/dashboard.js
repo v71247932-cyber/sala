@@ -277,6 +277,22 @@ const dashboard = {
         this.historyCharts = [];
     },
 
+    randomizeAges() {
+        const athletes = storage.getAthletes();
+        const now = new Date();
+        athletes.forEach(a => {
+            const age = Math.floor(Math.random() * (90 - 5 + 1)) + 5;
+            const year = now.getFullYear() - age;
+            const month = Math.floor(Math.random() * 12);
+            const day = Math.floor(Math.random() * 28) + 1;
+            a.dob = new Date(year, month, day).toISOString().split('T')[0];
+        });
+        storage.saveAthletes(athletes);
+        this.render();
+        reports.renderTop10();
+        app.showToast(`Vârste random (5-90 ani) atribuite la ${athletes.length} sportivi!`);
+    },
+
     getPointsBreakdown(athlete) {
         if (!athlete) return {};
         const m = athlete.metrics || {};
