@@ -10,6 +10,9 @@ const dashboard = {
     },
 
     render() {
+        // Auto-fix sportivi fără DOB valid (vârstă 5-90)
+        this.fixInvalidDobs();
+
         const listContainer = document.getElementById('athletes-list');
         let athletes = storage.getAthletes();
         
@@ -277,15 +280,40 @@ const dashboard = {
         this.historyCharts = [];
     },
 
+    hasValidDob(athlete) {
+        if (!athlete.dob) return false;
+        const age = this.calculateAge(athlete.dob);
+        return age !== null && age >= 5 && age <= 90;
+    },
+
+    generateRandomDob() {
+        const now = new Date();
+        const age = Math.floor(Math.random() * (90 - 5 + 1)) + 5;
+        const year = now.getFullYear() - age;
+        const month = Math.floor(Math.random() * 12);
+        const day = Math.floor(Math.random() * 28) + 1;
+        return new Date(year, month, day).toISOString().split('T')[0];
+    },
+
+    fixInvalidDobs() {
+        const athletes = storage.getAthletes();
+        let fixed = 0;
+        athletes.forEach(a => {
+            if (!this.hasValidDob(a)) {
+                a.dob = this.generateRandomDob();
+                fixed++;
+            }
+        });
+        if (fixed > 0) {
+            storage.saveAthletes(athletes);
+        }
+        return fixed;
+    },
+
     randomizeAges() {
         const athletes = storage.getAthletes();
-        const now = new Date();
         athletes.forEach(a => {
-            const age = Math.floor(Math.random() * (90 - 5 + 1)) + 5;
-            const year = now.getFullYear() - age;
-            const month = Math.floor(Math.random() * 12);
-            const day = Math.floor(Math.random() * 28) + 1;
-            a.dob = new Date(year, month, day).toISOString().split('T')[0];
+            a.dob = this.generateRandomDob();
         });
         storage.saveAthletes(athletes);
         this.render();
