@@ -232,33 +232,71 @@ const tv = {
         this.updateNextSidebar(index, page);
     },
 
-    updateNextSidebar(currentIndex, currentPage) {
+    getNextStep(currentIndex, currentPage) {
+        // Figure out what comes next: category, page, and age group
         const sorted = this.getSorted(currentIndex);
         const top50 = sorted.slice(0, 50);
         const totalPages = Math.max(1, Math.ceil(top50.length / 10));
 
-        // Determine next category
-        let nextIndex;
-        if (currentPage + 1 < totalPages) {
-            nextIndex = currentIndex; // same category, next page
-        } else {
-            nextIndex = (currentIndex + 1) % this.categories.length;
-        }
-        const next = this.categories[nextIndex];
+        let nextCatIndex = currentIndex;
+        let nextAgeGroup = this.currentAgeGroup;
+        let nextAgeLabel = this.ageGroups.find(g => g.key === this.currentAgeGroup).label;
 
-        // Next icon & title
+        if (currentPage + 1 < totalPages) {
+            // Same category, next page
+            nextCatIndex = currentIndex;
+        } else if (currentIndex + 1 < this.categories.length) {
+            // Next category, same age group
+            nextCatIndex = currentIndex + 1;
+        } else {
+            // All categories done → next age group
+            nextCatIndex = 0;
+            // Find next non-empty age group
+            const startIdx = this.currentAgeIndex;
+            for (let i = 0; i < this.ageGroups.length; i++) {
+                const tryIdx = (startIdx + 1 + i) % this.ageGroups.length;
+                const tryGroup = this.ageGroups[tryIdx];
+                // Temporarily check athletes for this group
+                const oldGroup = this.currentAgeGroup;
+                this.currentAgeGroup = tryGroup.key;
+                const filtered = this.getFilteredAthletes();
+                this.currentAgeGroup = oldGroup;
+                if (filtered.length > 0 || tryGroup.key === 'all') {
+                    nextAgeGroup = tryGroup.key;
+                    nextAgeLabel = tryGroup.label;
+                    break;
+                }
+            }
+        }
+
+        return { nextCatIndex, nextAgeGroup, nextAgeLabel };
+    },
+
+    updateNextSidebar(currentIndex, currentPage) {
+        const { nextCatIndex, nextAgeGroup, nextAgeLabel } = this.getNextStep(currentIndex, currentPage);
+        const next = this.categories[nextCatIndex];
+
+        // Current age group label
+        const currentAgeLabel = this.ageGroups.find(g => g.key === this.currentAgeGroup).label;
+
+        // Next icon & title with age group
         const iconEl = document.getElementById('tv-next-icon');
         const titleEl = document.getElementById('tv-next-title');
         if (iconEl) iconEl.innerHTML = `<i class="fas ${next.icon}" style="color: ${next.color};"></i>`;
         if (titleEl) {
-            titleEl.textContent = next.title;
-            titleEl.style.color = next.color;
+            const ageInfo = `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">${nextAgeLabel}</div>`;
+            titleEl.innerHTML = `<span style="color: ${next.color};">${next.title}</span>${ageInfo}`;
         }
 
-        // Top 3 preview for next category
+        // Top 3 preview for next category (use next age group's athletes)
         const previewEl = document.getElementById('tv-next-preview');
         if (previewEl) {
-            const nextSorted = this.getSorted(nextIndex);
+            // Temporarily switch to next age group to get correct preview
+            const oldGroup = this.currentAgeGroup;
+            this.currentAgeGroup = nextAgeGroup;
+            const nextSorted = this.getSorted(nextCatIndex);
+            this.currentAgeGroup = oldGroup;
+
             const top3 = nextSorted.slice(0, 3);
             previewEl.innerHTML = top3.map((a, i) => {
                 const medal = i === 0 ? '#ffd700' : i === 1 ? '#c0c0c0' : '#cd7f32';
@@ -277,12 +315,13 @@ const tv = {
             }).join('');
         }
 
-        // Full list of all categories
+        // Full list of all categories with current age group label
         const listEl = document.getElementById('tv-next-list');
         if (listEl) {
-            listEl.innerHTML = this.categories.map((cat, i) => {
+            const ageHeader = `<div style="font-size: 0.7rem; color: var(--primary); font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05rem;">${currentAgeLabel}</div>`;
+            listEl.innerHTML = ageHeader + this.categories.map((cat, i) => {
                 const isActive = i === currentIndex;
-                const isNext = i === nextIndex && nextIndex !== currentIndex;
+                const isNext = i === nextCatIndex && nextCatIndex !== currentIndex;
                 const bg = isActive ? 'rgba(255,255,255,0.08)' : isNext ? 'rgba(255,255,255,0.04)' : 'transparent';
                 const opacity = isActive ? '1' : '0.6';
                 const label = isActive ? ' ◄' : isNext ? ' ►' : '';
