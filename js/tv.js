@@ -88,14 +88,30 @@ const tv = {
             this.currentPage = 0;
             this.currentIndex++;
             if (this.currentIndex >= this.categories.length) {
-                // All categories done for this age group → next age group
+                // All categories done → next age group (skip empty ones)
                 this.currentIndex = 0;
-                this.currentAgeIndex = (this.currentAgeIndex + 1) % this.ageGroups.length;
-                this.currentAgeGroup = this.ageGroups[this.currentAgeIndex].key;
-                this.renderAgeFilter();
+                this.advanceToNextAgeGroup();
             }
         }
         this.showCategory(this.currentIndex, this.currentPage);
+    },
+
+    advanceToNextAgeGroup() {
+        const startIndex = this.currentAgeIndex;
+        for (let i = 0; i < this.ageGroups.length; i++) {
+            this.currentAgeIndex = (startIndex + 1 + i) % this.ageGroups.length;
+            this.currentAgeGroup = this.ageGroups[this.currentAgeIndex].key;
+            // Check if this age group has any athletes
+            const filtered = this.getFilteredAthletes();
+            if (filtered.length > 0 || this.currentAgeGroup === 'all') {
+                this.renderAgeFilter();
+                return;
+            }
+        }
+        // Fallback to 'all'
+        this.currentAgeIndex = 0;
+        this.currentAgeGroup = 'all';
+        this.renderAgeFilter();
     },
 
     getSorted(index) {
