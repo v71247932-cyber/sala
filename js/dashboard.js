@@ -317,9 +317,9 @@ const dashboard = {
             'Mihai Popa', 'Sofia Dumitru', 'Luca Marin', 'Ana Stoica',
             'Darius Gheorghe', 'Ioana Constantin', 'Stefan Nita', 'Daria Florea'
         ];
-        let added = 0;
         const athletes = storage.getAthletes();
         const existingNames = athletes.map(a => a.name);
+        let added = 0;
 
         kidNames.forEach((name, i) => {
             if (existingNames.includes(name)) return;
@@ -330,7 +330,9 @@ const dashboard = {
             const dob = new Date(year, month, day).toISOString().split('T')[0];
             const code = String(1000 + Math.floor(Math.random() * 9000));
 
-            storage.addAthlete({
+            athletes.push({
+                id: Date.now() + i,
+                created_at: new Date().toISOString(),
                 name,
                 dob,
                 email: name.toLowerCase().replace(/ /g, '.') + '@test.ro',
@@ -340,6 +342,8 @@ const dashboard = {
                 password: '123456',
                 active: true,
                 goal: 'Sport',
+                trainings: 0,
+                matches: 0,
                 points: Math.floor(Math.random() * 500),
                 metrics: {
                     push_ups: Math.floor(Math.random() * 25),
@@ -354,6 +358,8 @@ const dashboard = {
             added++;
         });
 
+        // Save all at once (single sync to server)
+        storage.saveAthletes(athletes);
         this.render();
         reports.renderTop10();
         app.showToast(`${added} copii (6-17 ani) adăugați!`);
