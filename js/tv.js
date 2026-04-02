@@ -232,31 +232,22 @@ const tv = {
         this.updateNextSidebar(index, page);
     },
 
-    getNextStep(currentIndex, currentPage) {
-        // Figure out what comes next: category, page, and age group
-        const sorted = this.getSorted(currentIndex);
-        const top50 = sorted.slice(0, 50);
-        const totalPages = Math.max(1, Math.ceil(top50.length / 10));
-
-        let nextCatIndex = currentIndex;
+    getNextStep(currentIndex) {
+        // Always show the NEXT CATEGORY (not next page), with correct age group
+        let nextCatIndex;
         let nextAgeGroup = this.currentAgeGroup;
         let nextAgeLabel = this.ageGroups.find(g => g.key === this.currentAgeGroup).label;
 
-        if (currentPage + 1 < totalPages) {
-            // Same category, next page
-            nextCatIndex = currentIndex;
-        } else if (currentIndex + 1 < this.categories.length) {
+        if (currentIndex + 1 < this.categories.length) {
             // Next category, same age group
             nextCatIndex = currentIndex + 1;
         } else {
             // All categories done → next age group
             nextCatIndex = 0;
-            // Find next non-empty age group
             const startIdx = this.currentAgeIndex;
             for (let i = 0; i < this.ageGroups.length; i++) {
                 const tryIdx = (startIdx + 1 + i) % this.ageGroups.length;
                 const tryGroup = this.ageGroups[tryIdx];
-                // Temporarily check athletes for this group
                 const oldGroup = this.currentAgeGroup;
                 this.currentAgeGroup = tryGroup.key;
                 const filtered = this.getFilteredAthletes();
@@ -273,7 +264,7 @@ const tv = {
     },
 
     updateNextSidebar(currentIndex, currentPage) {
-        const { nextCatIndex, nextAgeGroup, nextAgeLabel } = this.getNextStep(currentIndex, currentPage);
+        const { nextCatIndex, nextAgeGroup, nextAgeLabel } = this.getNextStep(currentIndex);
         const next = this.categories[nextCatIndex];
 
         // Current age group label
