@@ -182,9 +182,11 @@ const tv = {
                     const rankColor = rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-muted)';
                     const rankBg = rank < 3 ? `rgba(${rank === 0 ? '255,215,0' : rank === 1 ? '192,192,192' : '205,127,50'}, 0.1)` : 'transparent';
 
+                    const age = this.calculateAge(a.dob);
+                    const ageStr = age !== null ? `<span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 400; margin-left: 0.5rem;">${age} ani</span>` : '';
                     return `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: ${rankBg}; transition: all 0.3s;">
                         <td style="padding: 1rem 1rem; font-weight: 900; font-size: 1.5rem; color: ${rankColor}; width: 80px;">${rank + 1}</td>
-                        <td style="padding: 1rem; font-size: 1.2rem; font-weight: 600;">${a.name}</td>
+                        <td style="padding: 1rem; font-size: 1.2rem; font-weight: 600;">${a.name}${ageStr}</td>
                         <td style="padding: 1rem; font-size: 1.1rem; text-align: right; color: var(--text-muted);">${value}</td>
                         <td style="padding: 1rem; font-size: 1.3rem; font-weight: 700; text-align: right; color: ${cat.color};">${points}p</td>
                     </tr>`;

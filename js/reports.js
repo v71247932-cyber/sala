@@ -388,12 +388,14 @@ const reports = {
                 .map(([label, val]) => `<span style="display:inline-block; background:rgba(0,210,255,0.08); padding:2px 8px; border-radius:4px; margin:2px; font-size:0.75rem;">${label}: <b>${val}p</b></span>`)
                 .join('');
 
+            const age = this.calculateAge(a.dob);
+            const ageStr = age !== null ? `${age} ani` : '-';
             return `
             <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 1rem; font-weight: bold; font-size: 1.2rem; color: ${index === 0 ? '#ffd700' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : 'var(--text-muted)'}">#${index + 1}</td>
                 <td style="padding: 1rem;">
                     <div style="font-weight: 600;">${a.name}</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">${a.email}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">${ageStr} • ${a.email}</div>
                 </td>
                 <td style="padding: 1rem;">${breakdownHtml || '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>'}</td>
                 <td style="padding: 1rem; font-weight: 600; color: var(--primary); font-size: 1.1rem;">${dashboard.calculateTotalPoints(a)} p</td>

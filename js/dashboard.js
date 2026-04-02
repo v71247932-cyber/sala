@@ -1,4 +1,14 @@
 const dashboard = {
+    calculateAge(dob) {
+        if (!dob) return null;
+        const birth = new Date(dob);
+        const now = new Date();
+        let age = now.getFullYear() - birth.getFullYear();
+        const m = now.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+        return age;
+    },
+
     render() {
         const listContainer = document.getElementById('athletes-list');
         let athletes = storage.getAthletes();
@@ -18,7 +28,7 @@ const dashboard = {
                 <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
                     <div>
                         <div style="font-weight: 600;">${a.name}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">${new Date(a.dob).toLocaleDateString('ro-RO')}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">${a.dob ? this.calculateAge(a.dob) + ' ani' : '-'} <span style="opacity: 0.5;">• ${a.dob ? new Date(a.dob).toLocaleDateString('ro-RO') : '-'}</span></div>
                     </div>
                 </td>
                 <td style="padding: 1rem;">${a.goal || '-'}</td>
