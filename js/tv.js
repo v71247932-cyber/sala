@@ -3,6 +3,7 @@ const tv = {
     interval: null,
     athletes: [],
     currentAgeGroup: 'all',
+    currentAgeIndex: 0,
 
     ageGroups: [
         { key: 'all', label: 'Toate vârstele', min: 0, max: 999 },
@@ -77,8 +78,6 @@ const tv = {
     },
 
     nextPage() {
-        const cat = this.categories[this.currentIndex];
-        // Get total pages for current category
         let sorted = this.getSorted(this.currentIndex);
         const top50 = sorted.slice(0, 50);
         const totalPages = Math.max(1, Math.ceil(top50.length / 10));
@@ -87,7 +86,14 @@ const tv = {
         if (this.currentPage >= totalPages) {
             // Move to next category
             this.currentPage = 0;
-            this.currentIndex = (this.currentIndex + 1) % this.categories.length;
+            this.currentIndex++;
+            if (this.currentIndex >= this.categories.length) {
+                // All categories done for this age group → next age group
+                this.currentIndex = 0;
+                this.currentAgeIndex = (this.currentAgeIndex + 1) % this.ageGroups.length;
+                this.currentAgeGroup = this.ageGroups[this.currentAgeIndex].key;
+                this.renderAgeFilter();
+            }
         }
         this.showCategory(this.currentIndex, this.currentPage);
     },
@@ -131,7 +137,9 @@ const tv = {
 
     setAgeGroup(key) {
         this.currentAgeGroup = key;
+        this.currentAgeIndex = this.ageGroups.findIndex(g => g.key === key);
         this.currentPage = 0;
+        this.currentIndex = 0;
         this.renderAgeFilter();
         this.showCategory(this.currentIndex, 0);
         this.startRotation();
@@ -155,9 +163,11 @@ const tv = {
         const pageItems = top50.slice(page * 10, (page + 1) * 10);
         const startRank = page * 10;
 
-        // Update title with page info
+        // Update title with page info and age group
         const pageInfo = totalPages > 1 ? ` (${page + 1}/${totalPages})` : '';
-        title.innerHTML = `<i class="fas ${cat.icon}" style="color: ${cat.color}; margin-right: 0.75rem;"></i>${cat.title}${pageInfo}`;
+        const ageGroup = this.ageGroups.find(g => g.key === this.currentAgeGroup);
+        const ageLabel = this.currentAgeGroup !== 'all' ? ` — ${ageGroup.label}` : '';
+        title.innerHTML = `<i class="fas ${cat.icon}" style="color: ${cat.color}; margin-right: 0.75rem;"></i>${cat.title}${ageLabel}${pageInfo}`;
 
         // Fade effect
         tbody.style.opacity = '0';
