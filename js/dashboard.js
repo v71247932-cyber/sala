@@ -310,6 +310,55 @@ const dashboard = {
         return fixed;
     },
 
+    addTestKids() {
+        const now = new Date();
+        const kidNames = [
+            'Alex Popescu', 'Maria Ionescu', 'Andrei Stan', 'Elena Radu',
+            'Mihai Popa', 'Sofia Dumitru', 'Luca Marin', 'Ana Stoica',
+            'Darius Gheorghe', 'Ioana Constantin', 'Stefan Nita', 'Daria Florea'
+        ];
+        let added = 0;
+        const athletes = storage.getAthletes();
+        const existingNames = athletes.map(a => a.name);
+
+        kidNames.forEach((name, i) => {
+            if (existingNames.includes(name)) return;
+            const age = 6 + Math.floor(Math.random() * 12); // 6-17 ani
+            const year = now.getFullYear() - age;
+            const month = Math.floor(Math.random() * 12);
+            const day = Math.floor(Math.random() * 28) + 1;
+            const dob = new Date(year, month, day).toISOString().split('T')[0];
+            const code = String(1000 + Math.floor(Math.random() * 9000));
+
+            storage.addAthlete({
+                name,
+                dob,
+                email: name.toLowerCase().replace(/ /g, '.') + '@test.ro',
+                phone: '07' + String(20000000 + Math.floor(Math.random() * 80000000)).slice(0, 8),
+                gender: i % 2 === 0 ? 'M' : 'F',
+                unique_code: code,
+                password: '123456',
+                active: true,
+                goal: 'Sport',
+                points: Math.floor(Math.random() * 500),
+                metrics: {
+                    push_ups: Math.floor(Math.random() * 25),
+                    plank: Math.floor(Math.random() * 60),
+                    long_jump: Math.floor(Math.random() * 150),
+                    hang_time: Math.floor(Math.random() * 30),
+                    grip_strength: Math.floor(Math.random() * 25),
+                    punch_force: Math.floor(Math.random() * 200)
+                },
+                guardian: { name: 'Părinte ' + name.split(' ')[1], phone: '07' + String(20000000 + Math.floor(Math.random() * 80000000)).slice(0, 8) }
+            });
+            added++;
+        });
+
+        this.render();
+        reports.renderTop10();
+        app.showToast(`${added} copii (6-17 ani) adăugați!`);
+    },
+
     randomizeAges() {
         const athletes = storage.getAthletes();
         athletes.forEach(a => {
