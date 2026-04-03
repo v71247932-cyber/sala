@@ -41,7 +41,9 @@ const registration = {
         let isUnique = false;
 
         while (!isUnique) {
-            code = Math.floor(1000 + Math.random() * 9000).toString();
+            const arr = new Uint16Array(1);
+            crypto.getRandomValues(arr);
+            code = (1000 + (arr[0] % 9000)).toString();
             isUnique = !athletes.some(a => a.unique_code === code);
         }
         return code;
