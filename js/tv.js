@@ -415,11 +415,38 @@ const tv = {
         });
 
         const makeChart = (canvasId, data, color, bgColor) => {
-            const ctx = document.getElementById(canvasId).getContext('2d');
+            // Reset canvas to avoid stale Chart.js state
+            const oldCanvas = document.getElementById(canvasId);
+            const parent = oldCanvas.parentNode;
+            const newCanvas = document.createElement('canvas');
+            newCanvas.id = canvasId;
+            parent.replaceChild(newCanvas, oldCanvas);
+
+            const ctx = newCanvas.getContext('2d');
             const chart = new Chart(ctx, {
                 type: 'line',
-                data: { labels: chartLabels, datasets: [{ data, borderColor: color, backgroundColor: bgColor, tension: 0.45, fill: true, borderWidth: 3, pointRadius: 5, pointBackgroundColor: color }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true } } }
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        data,
+                        borderColor: color,
+                        backgroundColor: bgColor,
+                        tension: 0.45,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointBackgroundColor: color
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+                    }
+                }
             });
             this.personalCharts.push(chart);
         };
