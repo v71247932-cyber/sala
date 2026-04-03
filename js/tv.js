@@ -374,7 +374,6 @@ const tv = {
 
     showPersonal(athlete) {
         if (this.interval) clearInterval(this.interval);
-        document.getElementById('tv-leaderboard').classList.add('hidden');
         document.getElementById('tv-personal').classList.remove('hidden');
 
         document.getElementById('tv-personal-name').textContent = `Istoric: ${athlete.name}`;
@@ -449,7 +448,6 @@ const tv = {
 
     closePersonal() {
         document.getElementById('tv-personal').classList.add('hidden');
-        document.getElementById('tv-leaderboard').classList.remove('hidden');
         this.personalCharts.forEach(c => c.destroy());
         this.personalCharts = [];
         this.startRotation();
