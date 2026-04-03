@@ -1,4 +1,7 @@
 const dashboard = {
+    currentPage: 1,
+    perPage: 10,
+
     calculateAge(dob) {
         if (!dob) return null;
         const birth = new Date(dob);
@@ -23,10 +26,17 @@ const dashboard = {
 
         if (athletes.length === 0) {
             listContainer.innerHTML = '<tr><td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">Niciun sportiv înregistrat încă.</td></tr>';
+            this.renderPagination(0);
             return;
         }
 
-        listContainer.innerHTML = athletes.map(a => `
+        const totalPages = Math.ceil(athletes.length / this.perPage);
+        if (this.currentPage > totalPages) this.currentPage = totalPages;
+        if (this.currentPage < 1) this.currentPage = 1;
+        const start = (this.currentPage - 1) * this.perPage;
+        const pageAthletes = athletes.slice(start, start + this.perPage);
+
+        listContainer.innerHTML = pageAthletes.map(a => `
             <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
                     <div>
@@ -51,6 +61,42 @@ const dashboard = {
                 </td>
             </tr>
         `).join('');
+
+        this.renderPagination(totalPages);
+    },
+
+    renderPagination(totalPages) {
+        let paginationEl = document.getElementById('athletes-pagination');
+        if (!paginationEl) {
+            const table = document.getElementById('athletes-list')?.closest('table');
+            if (table) {
+                paginationEl = document.createElement('div');
+                paginationEl.id = 'athletes-pagination';
+                table.parentNode.insertBefore(paginationEl, table.nextSibling);
+            } else return;
+        }
+
+        if (totalPages <= 1) {
+            paginationEl.innerHTML = '';
+            return;
+        }
+
+        let buttons = '';
+        buttons += `<button onclick="dashboard.goToPage(${this.currentPage - 1})" style="padding: 0.5rem 0.85rem; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 0.4rem; cursor: pointer; font-size: 0.85rem;" ${this.currentPage === 1 ? 'disabled style="padding: 0.5rem 0.85rem; border: 1px solid var(--border); background: transparent; color: var(--border); border-radius: 0.4rem; cursor: default; font-size: 0.85rem; opacity: 0.4;"' : ''}>‹</button>`;
+
+        for (let p = 1; p <= totalPages; p++) {
+            const isActive = p === this.currentPage;
+            buttons += `<button onclick="dashboard.goToPage(${p})" style="padding: 0.5rem 0.85rem; border: 1px solid ${isActive ? 'var(--primary)' : 'var(--border)'}; background: ${isActive ? 'var(--primary)' : 'transparent'}; color: ${isActive ? 'white' : 'var(--text-muted)'}; border-radius: 0.4rem; cursor: pointer; font-size: 0.85rem; font-weight: ${isActive ? '700' : '400'};">${p}</button>`;
+        }
+
+        buttons += `<button onclick="dashboard.goToPage(${this.currentPage + 1})" style="padding: 0.5rem 0.85rem; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 0.4rem; cursor: pointer; font-size: 0.85rem;" ${this.currentPage === totalPages ? 'disabled style="padding: 0.5rem 0.85rem; border: 1px solid var(--border); background: transparent; color: var(--border); border-radius: 0.4rem; cursor: default; font-size: 0.85rem; opacity: 0.4;"' : ''}>›</button>`;
+
+        paginationEl.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; padding: 1rem 0;">${buttons}</div>`;
+    },
+
+    goToPage(page) {
+        this.currentPage = page;
+        this.render();
     },
 
     openEvaluation(id) {
