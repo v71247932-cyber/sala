@@ -40,7 +40,7 @@ const dashboard = {
             <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                 <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
                     <div>
-                        <div style="font-weight: 600;">${a.name}</div>
+                        <div style="font-weight: 600;">${a.name} <span style="font-size: 0.75rem; color: var(--primary); font-weight: 500; opacity: 0.8;">#${a.unique_code || '-'}</span></div>
                         <div style="font-size: 0.8rem; color: var(--text-muted);">${a.dob ? this.calculateAge(a.dob) + ' ani' : '-'} <span style="opacity: 0.5;">• ${a.dob ? new Date(a.dob).toLocaleDateString('ro-RO') : '-'}</span></div>
                     </div>
                 </td>
