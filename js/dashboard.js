@@ -406,6 +406,26 @@ const dashboard = {
         app.showToast(`${added} copii (6-17 ani) adăugați!`);
     },
 
+    resetAllCodes() {
+        const athletes = storage.getAthletes();
+        const usedCodes = new Set();
+
+        athletes.forEach(a => {
+            let code;
+            do {
+                const arr = new Uint16Array(1);
+                crypto.getRandomValues(arr);
+                code = (1000 + (arr[0] % 9000)).toString();
+            } while (usedCodes.has(code));
+            usedCodes.add(code);
+            a.unique_code = code;
+        });
+
+        storage.saveAthletes(athletes);
+        this.render();
+        app.showToast(`Codurile a ${athletes.length} sportivi au fost resetate!`);
+    },
+
     randomizeAges() {
         const athletes = storage.getAthletes();
         athletes.forEach(a => {
