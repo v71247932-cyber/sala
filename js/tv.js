@@ -286,13 +286,12 @@ const tv = {
             listEl.innerHTML = ageHeader + this.categories.map((cat, i) => {
                 const isActive = i === currentIndex;
                 const isNext = i === nextCatIndex && nextCatIndex !== currentIndex;
-                const bg = isActive ? 'rgba(255,255,255,0.08)' : isNext ? 'rgba(255,255,255,0.04)' : 'transparent';
-                const opacity = isActive ? '1' : '0.6';
-                const label = '';
-                return `<div onclick="tv.goTo(${i})" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.5rem; border-radius: 0.4rem; cursor: pointer; background: ${bg}; opacity: ${opacity}; transition: all 0.2s;">
-                    <i class="fas ${cat.icon}" style="color: ${cat.color}; font-size: 0.75rem; width: 1rem; text-align: center;"></i>
-                    <span style="font-size: 0.8rem; flex: 1;">${cat.title.replace('Top 50 - ', '')}</span>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">${label}</span>
+                const bg = isActive ? 'rgba(255,255,255,0.12)' : isNext ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.02)';
+                const opacity = isActive ? '1' : '0.7';
+                const border = isActive ? `border-left: 3px solid ${cat.color};` : 'border-left: 3px solid transparent;';
+                return `<div onclick="tv.goTo(${i})" style="display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.65rem; margin-bottom: 0.3rem; border-radius: 0.4rem; cursor: pointer; background: ${bg}; opacity: ${opacity}; transition: all 0.2s; ${border}">
+                    <i class="fas ${cat.icon}" style="color: ${cat.color}; font-size: 0.85rem; width: 1.1rem; text-align: center;"></i>
+                    <span style="font-size: 0.85rem; flex: 1; font-weight: ${isActive ? '600' : '400'};">${cat.title.replace('Top 50 - ', '')}</span>
                 </div>`;
             }).join('');
         }
