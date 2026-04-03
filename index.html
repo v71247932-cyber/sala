@@ -101,18 +101,18 @@
     <div id="tv-screen" class="hidden" style="height: 100vh; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%); padding: 0.5rem 2rem; overflow: hidden; display: flex; flex-direction: column;">
         <!-- Leaderboard View -->
         <div id="tv-leaderboard" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div style="flex: 1;">
                     <div class="logo" style="font-size: 3rem;">FitGo.ro</div>
-                </div>
-                <div style="text-align: center; flex: 2;">
-                    <h1 id="tv-category-title" style="font-size: 2.2rem; font-weight: 800; color: white; margin: 0.5rem 0 0 0;">Top 10 - General</h1>
                 </div>
                 <div style="flex: 1; text-align: right;">
                     <button onclick="tv.showCodeInput()" aria-label="Vezi scorul personal" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
                         <i class="fas fa-user" aria-hidden="true"></i> Scor Personal
                     </button>
                 </div>
+            </div>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <h1 id="tv-category-title" style="font-size: 2.2rem; font-weight: 800; color: white; margin: 0;">Top 10 - General</h1>
             </div>
             <div style="display: flex; gap: 1.5rem; margin: 0 auto; align-items: flex-start; flex: 1; min-height: 0; overflow: hidden; width: 100%;">
                 <div class="card" style="padding: 1rem 2rem; flex: 1; min-width: 0; overflow-y: auto;">
