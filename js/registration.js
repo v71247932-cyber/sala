@@ -106,11 +106,17 @@ const registration = {
         }
         const uniqueCode = this.generateUniqueCode();
 
+        const firstName = document.getElementById('pub-firstname').value.trim();
+        const lastName = document.getElementById('pub-lastname').value.trim();
+        const fullName = lastName ? firstName + ' ' + lastName : firstName;
+
         const athleteData = {
             id: Date.now(),
             unique_code: uniqueCode,
             password: password,
-            name: document.getElementById('pub-name').value,
+            name: fullName,
+            first_name: firstName,
+            last_name: lastName,
             email: document.getElementById('pub-email').value,
             phone: document.getElementById('pub-phone').value,
             dob: document.getElementById('pub-dob').value,
