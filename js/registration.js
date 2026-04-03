@@ -30,9 +30,11 @@ const registration = {
     },
 
     calculateAge(birthday) {
-        const ageDifMs = Date.now() - birthday.getTime();
-        const ageDate = new Date(ageDifMs);
-        return Math.abs(ageDate.getUTCFullYear() - 1970);
+        const now = new Date();
+        let age = now.getFullYear() - birthday.getFullYear();
+        const m = now.getMonth() - birthday.getMonth();
+        if (m < 0 || (m === 0 && now.getDate() < birthday.getDate())) age--;
+        return age;
     },
 
     generateUniqueCode() {
@@ -97,8 +99,12 @@ const registration = {
     },
 
     handlePublicSignup() {
-        const uniqueCode = this.generateUniqueCode();
         const password = document.getElementById('pub-password').value;
+        if (password.length < 6) {
+            app.showToast('Parola trebuie să aibă minim 6 caractere!', 'error');
+            return;
+        }
+        const uniqueCode = this.generateUniqueCode();
 
         const athleteData = {
             id: Date.now(),
