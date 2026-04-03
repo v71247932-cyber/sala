@@ -192,6 +192,14 @@ const tv = {
             if (pageItems.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" style="padding: 3rem; text-align: center; color: var(--text-muted); font-size: 1.3rem;">Niciun sportiv momentan.</td></tr>';
             } else {
+                // Calculate row height to fill table
+                const card = tbody.closest('.card');
+                const table = tbody.closest('table');
+                const thead = table.querySelector('thead');
+                const availableH = card.clientHeight - (thead ? thead.offsetHeight : 0) - 32;
+                const rowH = Math.max(30, Math.floor(availableH / pageItems.length));
+                const vPad = Math.max(2, Math.floor((rowH - 24) / 2));
+
                 tbody.innerHTML = pageItems.map((a, i) => {
                     const rank = startRank + i;
                     let value, points;
@@ -209,11 +217,11 @@ const tv = {
 
                     const age = this.calculateAge(a.dob);
                     const ageStr = age !== null ? `<span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 400; margin-left: 0.5rem;">${age} ani</span>` : '';
-                    return `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: ${rankBg}; transition: all 0.3s;">
-                        <td style="padding: 0.45rem 1rem; font-weight: 900; font-size: 1.2rem; color: ${rankColor}; width: 60px;">${rank + 1}</td>
-                        <td style="padding: 0.45rem 1rem; font-size: 1.05rem; font-weight: 600;">${a.name}${ageStr}</td>
-                        <td style="padding: 0.45rem 1rem; font-size: 1rem; text-align: right; color: var(--text-muted);">${value}</td>
-                        <td style="padding: 0.45rem 1rem; font-size: 1.1rem; font-weight: 700; text-align: right; color: ${cat.color};">${points}p</td>
+                    return `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: ${rankBg}; transition: all 0.3s; height: ${rowH}px;">
+                        <td style="padding: ${vPad}px 1rem; font-weight: 900; font-size: 1.2rem; color: ${rankColor}; width: 60px;">${rank + 1}</td>
+                        <td style="padding: ${vPad}px 1rem; font-size: 1.05rem; font-weight: 600;">${a.name}${ageStr}</td>
+                        <td style="padding: ${vPad}px 1rem; font-size: 1rem; text-align: right; color: var(--text-muted);">${value}</td>
+                        <td style="padding: ${vPad}px 1rem; font-size: 1.1rem; font-weight: 700; text-align: right; color: ${cat.color};">${points}p</td>
                     </tr>`;
                 }).join('');
             }
