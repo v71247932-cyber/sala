@@ -211,6 +211,21 @@ input:focus, select:focus {
     .app-container {
         padding: 1rem;
     }
+
+    /* TV screen tablet */
+    #tv-screen {
+        padding: 0.75rem 1.25rem !important;
+    }
+
+    #tv-next-sidebar {
+        width: 220px !important;
+    }
+
+    /* Personal score tablet - 2 columns still but smaller */
+    #tv-personal > .card {
+        width: 98% !important;
+        padding: 1.25rem !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -268,6 +283,12 @@ input:focus, select:focus {
         padding: 1.25rem;
     }
 
+    /* Disable hover effects on touch devices */
+    .card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
     /* TV Screen mobile */
     #tv-screen {
         padding: 0.75rem !important;
@@ -311,10 +332,9 @@ input:focus, select:focus {
         overflow: visible !important;
     }
 
+    /* Hide sidebar on mobile - show only the table */
     #tv-next-sidebar {
-        width: 100% !important;
-        order: -1;
-        margin-bottom: 0.75rem;
+        display: none !important;
     }
 
     /* Table cells smaller on mobile */
@@ -328,33 +348,51 @@ input:focus, select:focus {
         font-size: 0.85rem !important;
     }
 
+    /* Table card less padding on mobile */
+    #tv-leaderboard .card {
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0.75rem;
+    }
+
     /* Personal score mobile */
     #tv-personal {
-        padding: 0.75rem !important;
+        padding: 0.5rem !important;
         align-items: flex-start !important;
+        overflow-y: auto !important;
     }
 
     #tv-personal > .card {
         width: 100% !important;
         max-width: 100% !important;
-        padding: 1rem !important;
+        padding: 0.75rem !important;
         max-height: none !important;
+        border-radius: 0.75rem;
+    }
+
+    #tv-personal h2 {
+        font-size: 1.1rem !important;
+        margin-bottom: 0.75rem !important;
     }
 
     #tv-personal table th,
     #tv-personal table td {
-        padding: 0.4rem 0.3rem !important;
-        font-size: 0.7rem !important;
+        padding: 0.35rem 0.25rem !important;
+        font-size: 0.65rem !important;
+        white-space: nowrap;
     }
 
     /* Charts grid - single column on mobile */
     #tv-personal .card > div:last-child {
         grid-template-columns: 1fr !important;
-        gap: 1rem !important;
+        gap: 0.75rem !important;
     }
 
     #tv-personal .card > div:last-child > div:last-child {
         grid-column: 1 !important;
+    }
+
+    #tv-personal .card > div:last-child h4 {
+        font-size: 0.85rem !important;
     }
 
     /* Code input modal */
@@ -363,9 +401,85 @@ input:focus, select:focus {
         padding: 1.5rem !important;
     }
 
+    #tv-code-modal input {
+        font-size: 2rem !important;
+        letter-spacing: 0.5rem !important;
+        padding: 0.75rem !important;
+    }
+
+    #tv-code-modal .logo {
+        font-size: 1.8rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    #tv-code-modal h2 {
+        font-size: 1.1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
     /* Age filter buttons */
     #tv-age-filter {
         padding-top: 0.5rem !important;
+    }
+
+    /* /start screen */
+    #start-screen {
+        padding: 1rem !important;
+    }
+
+    #start-screen .card {
+        padding: 1.5rem !important;
+    }
+
+    #start-screen .logo {
+        font-size: 2rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    #start-screen input {
+        font-size: 2.5rem !important;
+        letter-spacing: 0.75rem !important;
+        padding: 1rem !important;
+    }
+
+    #start-screen .btn {
+        height: 3rem !important;
+        font-size: 1rem !important;
+    }
+
+    /* /cod screen */
+    #cod-screen {
+        padding: 1rem !important;
+    }
+
+    #cod-screen .card {
+        padding: 1.25rem !important;
+    }
+
+    #cod-display {
+        font-size: 2rem !important;
+        letter-spacing: 0.3rem !important;
+    }
+
+    /* History modal (admin) */
+    #history-modal .card {
+        width: 98% !important;
+        padding: 0.75rem !important;
+        max-height: 95vh !important;
+    }
+
+    #history-modal table th,
+    #history-modal table td {
+        padding: 0.35rem 0.25rem !important;
+        font-size: 0.65rem !important;
+    }
+
+    #history-modal .card > div:last-child {
+        grid-template-columns: 1fr !important;
+    }
+
+    #history-modal .card > div:last-child > div:last-child {
+        grid-column: 1 !important;
     }
 }
 
@@ -387,26 +501,54 @@ input:focus, select:focus {
     }
 
     #tv-screen {
-        padding: 0.5rem !important;
+        padding: 0.4rem !important;
     }
 
     #tv-screen .logo {
-        font-size: 1.4rem !important;
+        font-size: 1.3rem !important;
     }
 
     #tv-screen h1 {
-        font-size: 0.95rem !important;
+        font-size: 0.9rem !important;
+    }
+
+    #tv-table-header th {
+        padding: 0.3rem 0.25rem !important;
+        font-size: 0.7rem !important;
     }
 
     #tv-table-body td {
-        padding: 0.25rem 0.3rem !important;
-        font-size: 0.75rem !important;
+        padding: 0.25rem 0.25rem !important;
+        font-size: 0.7rem !important;
+    }
+
+    #tv-personal > .card {
+        padding: 0.5rem !important;
     }
 
     #tv-personal table th,
     #tv-personal table td {
-        padding: 0.3rem 0.2rem !important;
-        font-size: 0.6rem !important;
+        padding: 0.25rem 0.15rem !important;
+        font-size: 0.55rem !important;
+    }
+
+    #tv-personal h2 {
+        font-size: 0.95rem !important;
+    }
+
+    #start-screen input {
+        font-size: 2rem !important;
+        letter-spacing: 0.5rem !important;
+    }
+
+    /* Age filter smaller */
+    #tv-age-filter button {
+        font-size: 0.7rem !important;
+        padding: 0.3rem 0.5rem !important;
+    }
+
+    #tv-dots {
+        gap: 0.4rem !important;
     }
 }
 
