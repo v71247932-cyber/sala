@@ -56,6 +56,7 @@ const dashboard = {
                             <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="dashboard.openEvaluation(${a.id})">Evaluare</button>
                             <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(14, 165, 233, 0.1); color: var(--primary);" onclick="dashboard.openHistory(${a.id})">Istoric</button>
                             <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(16, 185, 129, 0.1); color: #10b981;" onclick="events.openAssign(${a.id})"><i class="fas fa-star" style="margin-right: 0.3rem;"></i>Puncte</button>
+                            <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: rgba(239, 68, 68, 0.1); color: #ef4444;" onclick="dashboard.deleteAthlete(${a.id}, '${a.name.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i></button>
                         </div>
                     ` : ''}
                 </td>
@@ -122,6 +123,16 @@ const dashboard = {
 
     closeEvaluation() {
         document.getElementById('evaluation-modal').classList.add('hidden');
+    },
+
+    deleteAthlete(id, name) {
+        if (!confirm(`Sigur vrei să ștergi sportivul "${name}"?`)) return;
+        const athletes = storage.getAthletes().filter(a => a.id !== id);
+        storage.saveAthletes(athletes);
+        this.render();
+        reports.renderTop10();
+        reports.renderTodo();
+        app.showToast(`${name} a fost șters.`);
     },
 
     handleEvaluationSubmit(e) {
