@@ -109,7 +109,7 @@ const registration = {
             phone: document.getElementById('pub-phone').value,
             dob: document.getElementById('pub-dob').value,
             goal: document.getElementById('pub-goal').value,
-            metrics: { punch_force: 0, long_jump: 0, hang_time: 0, plank: 0, grip_strength: 0, sprint: 0 },
+            metrics: { punch_force: 0, long_jump: 0, hang_time: 0, plank: 0, grip_strength: 0, push_ups: 0 },
             active: true
         };
 

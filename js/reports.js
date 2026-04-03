@@ -421,6 +421,7 @@ const reports = {
     },
 
     goToTodoPage(type, page) {
+        if (page < 1) return;
         if (type === 'inactive') this.todoInactivePage = page;
         else this.todoEvalPage = page;
         this.renderTodo();

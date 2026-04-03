@@ -95,6 +95,7 @@ const dashboard = {
     },
 
     goToPage(page) {
+        if (page < 1) return;
         this.currentPage = page;
         this.render();
     },
@@ -117,12 +118,6 @@ const dashboard = {
         document.getElementById('eval-pushups').value = m.push_ups || '';
         document.getElementById('evaluation-modal').classList.remove('hidden');
 
-        // Mock history data for chart
-        const history = {
-            dates: ['Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            scores: [45, 52, 48, 60, this.calculateScore(athlete.metrics)]
-        };
-        setTimeout(() => reports.renderEvolutionChart('evolution-chart', history), 100);
     },
 
     closeEvaluation() {
@@ -440,8 +435,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = e.target.value.toLowerCase();
         const rows = document.querySelectorAll('#athletes-list tr');
         rows.forEach(row => {
-            const name = row.querySelector('div')?.innerText.toLowerCase() || '';
-            row.style.display = name.includes(term) ? '' : 'none';
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
         });
     });
 
