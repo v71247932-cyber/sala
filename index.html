@@ -30,9 +30,9 @@
     </div>
 
     <!-- TV Display Screen (Public - for TV/Monitor) -->
-    <div id="tv-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%); padding: 2rem 3rem; overflow: hidden;">
+    <div id="tv-screen" class="hidden" style="height: 100vh; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%); padding: 2rem 3rem; overflow: hidden; display: flex; flex-direction: column;">
         <!-- Leaderboard View -->
-        <div id="tv-leaderboard">
+        <div id="tv-leaderboard" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
                 <div style="flex: 1;"></div>
                 <div style="text-align: center; flex: 2;">
@@ -45,8 +45,8 @@
                     </button>
                 </div>
             </div>
-            <div style="display: flex; gap: 1.5rem; max-width: 1400px; margin: 0 auto; align-items: flex-start;">
-                <div class="card" style="padding: 1rem 2rem; flex: 1; min-width: 0;">
+            <div style="display: flex; gap: 1.5rem; max-width: 1400px; margin: 0 auto; align-items: flex-start; flex: 1; min-height: 0; overflow: hidden;">
+                <div class="card" style="padding: 1rem 2rem; flex: 1; min-width: 0; overflow-y: auto;">
                     <table style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr id="tv-table-header" style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
@@ -72,8 +72,8 @@
                     </div>
                 </div>
             </div>
-            <div id="tv-age-filter" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap;"></div>
-            <div id="tv-dots" style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 1rem;"></div>
+            <div id="tv-age-filter" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: auto; padding-top: 1rem; flex-wrap: wrap; flex-shrink: 0;"></div>
+            <div id="tv-dots" style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 0.75rem; flex-shrink: 0;"></div>
         </div>
 
         <!-- Code Input Modal -->
