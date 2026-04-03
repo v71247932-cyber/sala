@@ -288,7 +288,7 @@ const tv = {
                 const isNext = i === nextCatIndex && nextCatIndex !== currentIndex;
                 const bg = isActive ? 'rgba(255,255,255,0.08)' : isNext ? 'rgba(255,255,255,0.04)' : 'transparent';
                 const opacity = isActive ? '1' : '0.6';
-                const label = isActive ? ' ◄' : isNext ? ' ►' : '';
+                const label = '';
                 return `<div onclick="tv.goTo(${i})" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.5rem; border-radius: 0.4rem; cursor: pointer; background: ${bg}; opacity: ${opacity}; transition: all 0.2s;">
                     <i class="fas ${cat.icon}" style="color: ${cat.color}; font-size: 0.75rem; width: 1rem; text-align: center;"></i>
                     <span style="font-size: 0.8rem; flex: 1;">${cat.title.replace('Top 50 - ', '')}</span>
