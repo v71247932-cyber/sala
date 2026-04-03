@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="ro" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
@@ -47,18 +47,36 @@
 
     <!-- Structured Data -->
     <script type="application/ld+json">
-    {
+    [{
         "@context": "https://schema.org",
         "@type": "SportsOrganization",
         "name": "FitGo.ro",
         "url": "https://fitgo.ro",
-        "description": "Platforma de clasament și evaluare fitness pentru copii și adulți",
-        "sameAs": [],
+        "description": "Platforma de clasament și evaluare fitness pentru copii și adulți. Urmărește progresul sportiv, vezi topul sportivilor.",
         "address": {
             "@type": "PostalAddress",
             "addressCountry": "RO"
-        }
-    }
+        },
+        "sport": "Fitness",
+        "foundingDate": "2024"
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "FitGo.ro",
+        "url": "https://fitgo.ro",
+        "inLanguage": "ro"
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Acasă", "item": "https://fitgo.ro/"},
+            {"@type": "ListItem", "position": 2, "name": "Înregistrare", "item": "https://fitgo.ro/nou"},
+            {"@type": "ListItem", "position": 3, "name": "Login", "item": "https://fitgo.ro/start"},
+            {"@type": "ListItem", "position": 4, "name": "Recuperare Cod", "item": "https://fitgo.ro/cod"}
+        ]
+    }]
     </script>
 </head>
 
@@ -90,14 +108,14 @@
                     <h1 id="tv-category-title" style="font-size: 1.6rem; font-weight: 800; color: white; margin: 0;">Top 10 - General</h1>
                 </div>
                 <div style="flex: 1; text-align: right;">
-                    <button onclick="tv.showCodeInput()" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
-                        <i class="fas fa-user"></i> Scor Personal
+                    <button onclick="tv.showCodeInput()" aria-label="Vezi scorul personal" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-user" aria-hidden="true"></i> Scor Personal
                     </button>
                 </div>
             </div>
             <div style="display: flex; gap: 1.5rem; margin: 0 auto; align-items: flex-start; flex: 1; min-height: 0; overflow: hidden; width: 100%;">
                 <div class="card" style="padding: 1rem 2rem; flex: 1; min-width: 0; overflow-y: auto;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;" aria-label="Clasament sportivi">
                         <thead>
                             <tr id="tv-table-header" style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
                                 <th style="padding: 0.5rem 1rem; font-size: 1rem; width: 60px;">#</th>
@@ -735,13 +753,13 @@
         </div>
     </div>
 
-    <script src="/js/storage.js"></script>
-    <script src="/js/app.js"></script>
-    <script src="/js/registration.js"></script>
-    <script src="/js/dashboard.js"></script>
-    <script src="/js/events.js"></script>
-    <script src="/js/reports.js"></script>
-    <script src="/js/tv.js"></script>
+    <script src="/js/storage.js" defer></script>
+    <script src="/js/app.js" defer></script>
+    <script src="/js/registration.js" defer></script>
+    <script src="/js/dashboard.js" defer></script>
+    <script src="/js/events.js" defer></script>
+    <script src="/js/reports.js" defer></script>
+    <script src="/js/tv.js" defer></script>
 </body>
 
 </html>
