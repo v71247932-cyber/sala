@@ -278,32 +278,6 @@ const tv = {
             titleEl.innerHTML = `<span style="color: ${next.color};">${next.title}</span>${ageInfo}`;
         }
 
-        // Top 3 preview for next category (use next age group's athletes)
-        const previewEl = document.getElementById('tv-next-preview');
-        if (previewEl) {
-            // Temporarily switch to next age group to get correct preview
-            const oldGroup = this.currentAgeGroup;
-            this.currentAgeGroup = nextAgeGroup;
-            const nextSorted = this.getSorted(nextCatIndex);
-            this.currentAgeGroup = oldGroup;
-
-            const top3 = nextSorted.slice(0, 3);
-            previewEl.innerHTML = top3.map((a, i) => {
-                const medal = i === 0 ? '#ffd700' : i === 1 ? '#c0c0c0' : '#cd7f32';
-                let val = '';
-                if (next.key === 'overall') {
-                    val = this.calcTotal(a) + 'p';
-                } else {
-                    const raw = (a.metrics || {})[next.key] || 0;
-                    val = raw + ' ' + next.unit;
-                }
-                return `<div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; ${i < 2 ? 'border-bottom: 1px solid rgba(255,255,255,0.05);' : ''}">
-                    <span style="font-weight: 800; color: ${medal}; width: 1.2rem; font-size: 0.9rem;">${i + 1}</span>
-                    <span style="flex: 1; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.name}</span>
-                    <span style="font-size: 0.8rem; color: ${next.color}; font-weight: 600;">${val}</span>
-                </div>`;
-            }).join('');
-        }
 
         // Full list of all categories with current age group label
         const listEl = document.getElementById('tv-next-list');
