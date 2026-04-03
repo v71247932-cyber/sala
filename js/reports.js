@@ -297,6 +297,10 @@ const reports = {
         app.showToast(`Email de inactivitate trimis către ${athlete.name}`);
     },
 
+    todoInactivePage: 1,
+    todoEvalPage: 1,
+    todoPerPage: 10,
+
     renderTodo() {
         const athletes = storage.getAthletes();
         const now = new Date();
@@ -319,12 +323,19 @@ const reports = {
             return !m.punch_force && !m.long_jump && !m.hang_time && !m.plank && !m.grip_strength && !m.push_ups;
         });
 
-        // Render inactive list
+        // Render inactive list with pagination
         const inactiveList = document.getElementById('todo-inactive-list');
         if (inactive.length === 0) {
             inactiveList.innerHTML = '<tr><td colspan="4" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Toți sportivii sunt activi! 🎉</td></tr>';
+            this.renderTodoPagination('inactive', 0);
         } else {
-            inactiveList.innerHTML = inactive.map(a => {
+            const totalInactivePages = Math.ceil(inactive.length / this.todoPerPage);
+            if (this.todoInactivePage > totalInactivePages) this.todoInactivePage = totalInactivePages;
+            if (this.todoInactivePage < 1) this.todoInactivePage = 1;
+            const startI = (this.todoInactivePage - 1) * this.todoPerPage;
+            const pageInactive = inactive.slice(startI, startI + this.todoPerPage);
+
+            inactiveList.innerHTML = pageInactive.map(a => {
                 let lastLoginText = 'Niciodată';
                 let daysAbsent = '∞';
                 if (a.last_start_login) {
@@ -347,14 +358,22 @@ const reports = {
                     </td>
                 </tr>`;
             }).join('');
+            this.renderTodoPagination('inactive', totalInactivePages);
         }
 
-        // Render needs eval list
+        // Render needs eval list with pagination
         const evalList = document.getElementById('todo-eval-list');
         if (needsEval.length === 0) {
             evalList.innerHTML = '<tr><td colspan="3" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Toți sportivii au fost evaluați! ✅</td></tr>';
+            this.renderTodoPagination('eval', 0);
         } else {
-            evalList.innerHTML = needsEval.map(a => `
+            const totalEvalPages = Math.ceil(needsEval.length / this.todoPerPage);
+            if (this.todoEvalPage > totalEvalPages) this.todoEvalPage = totalEvalPages;
+            if (this.todoEvalPage < 1) this.todoEvalPage = 1;
+            const startE = (this.todoEvalPage - 1) * this.todoPerPage;
+            const pageEval = needsEval.slice(startE, startE + this.todoPerPage);
+
+            evalList.innerHTML = pageEval.map(a => `
                 <tr style="border-bottom: 1px solid var(--border);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                     <td style="padding: 0.75rem 1rem; font-weight: 600;">${a.name}</td>
                     <td style="padding: 0.75rem 1rem; color: var(--text-muted);">${a.email}</td>
@@ -365,7 +384,46 @@ const reports = {
                     </td>
                 </tr>
             `).join('');
+            this.renderTodoPagination('eval', totalEvalPages);
         }
+    },
+
+    renderTodoPagination(type, totalPages) {
+        const listId = type === 'inactive' ? 'todo-inactive-list' : 'todo-eval-list';
+        const paginationId = `todo-${type}-pagination`;
+        let paginationEl = document.getElementById(paginationId);
+        if (!paginationEl) {
+            const table = document.getElementById(listId)?.closest('table');
+            if (table) {
+                paginationEl = document.createElement('div');
+                paginationEl.id = paginationId;
+                table.parentNode.insertBefore(paginationEl, table.nextSibling);
+            } else return;
+        }
+
+        if (totalPages <= 1) {
+            paginationEl.innerHTML = '';
+            return;
+        }
+
+        const currentPage = type === 'inactive' ? this.todoInactivePage : this.todoEvalPage;
+        let buttons = '';
+        buttons += `<button onclick="reports.goToTodoPage('${type}', ${currentPage - 1})" style="padding: 0.5rem 0.85rem; border: 1px solid var(--border); background: transparent; color: ${currentPage === 1 ? 'var(--border)' : 'var(--text-muted)'}; border-radius: 0.4rem; cursor: ${currentPage === 1 ? 'default' : 'pointer'}; font-size: 0.85rem; opacity: ${currentPage === 1 ? '0.4' : '1'};" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+
+        for (let p = 1; p <= totalPages; p++) {
+            const isActive = p === currentPage;
+            buttons += `<button onclick="reports.goToTodoPage('${type}', ${p})" style="padding: 0.5rem 0.85rem; border: 1px solid ${isActive ? 'var(--primary)' : 'var(--border)'}; background: ${isActive ? 'var(--primary)' : 'transparent'}; color: ${isActive ? 'white' : 'var(--text-muted)'}; border-radius: 0.4rem; cursor: pointer; font-size: 0.85rem; font-weight: ${isActive ? '700' : '400'};">${p}</button>`;
+        }
+
+        buttons += `<button onclick="reports.goToTodoPage('${type}', ${currentPage + 1})" style="padding: 0.5rem 0.85rem; border: 1px solid var(--border); background: transparent; color: ${currentPage === totalPages ? 'var(--border)' : 'var(--text-muted)'}; border-radius: 0.4rem; cursor: ${currentPage === totalPages ? 'default' : 'pointer'}; font-size: 0.85rem; opacity: ${currentPage === totalPages ? '0.4' : '1'};" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+
+        paginationEl.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; padding: 1rem 0;">${buttons}</div>`;
+    },
+
+    goToTodoPage(type, page) {
+        if (type === 'inactive') this.todoInactivePage = page;
+        else this.todoEvalPage = page;
+        this.renderTodo();
     },
 
     renderTop10() {
