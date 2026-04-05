@@ -105,9 +105,11 @@ const app = {
 
         if (this.currentRoute === 'nou') {
             authScreen?.classList.remove('hidden');
-            // Show signup form directly, hide login
+            // Always show public signup form, hide login — even if admin is logged in
             document.getElementById('login-form')?.classList.add('hidden');
             document.getElementById('signup-prompt')?.classList.remove('hidden');
+            // Make sure mainApp stays hidden
+            mainApp?.classList.add('hidden');
             return;
         }
 
