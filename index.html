@@ -308,8 +308,10 @@
                     <label>Parolă</label>
                     <input type="password" id="login-pass" placeholder="******">
                 </div>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="app.handleLogin()">Intră
-                    în Cont</button>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="app.handleLogin()">Intră în Cont</button>
+                <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.9rem; text-align: center;">
+                    Nu ai cont? <a href="/nou" style="color: var(--primary); text-decoration: none;">Înregistrează-te</a>
+                </p>
             </div>
 
             <div id="signup-prompt" class="hidden" style="text-align: left;">
@@ -412,7 +414,8 @@
             <button class="btn btn-primary" style="width: 100%; height: 4rem; font-size: 1.2rem; margin-top: 2rem;"
                 onclick="app.handleStartLogin()">Verifică Cod</button>
             <p style="margin-top: 2rem; color: var(--text-muted); font-size: 0.9rem;">
-                Ai probleme cu codul? Contactează admin@admin.ro
+                Nu ai cont? <a href="/nou" style="color: var(--primary); text-decoration: none;">Înregistrează-te</a> |
+                <a href="/cod" style="color: var(--primary); text-decoration: none;">Recuperare cod</a>
             </p>
         </div>
     </div>
@@ -423,11 +426,11 @@
             <nav id="main-nav">
                 <div class="logo">FitGo</div>
                 <div class="nav-links">
-                    <a class="nav-link active" onclick="app.showSection('dashboard')">Dashboard</a>
-                    <a class="nav-link" id="nav-todo-link" onclick="app.showSection('todo')" style="display: none;">To
+                    <a class="nav-link active" href="#dashboard" onclick="app.showSection('dashboard'); return false;">Dashboard</a>
+                    <a class="nav-link" id="nav-todo-link" href="#todo" onclick="app.showSection('todo'); return false;" style="display: none;">To
                         Do</a>
-                    <a class="nav-link" id="nav-events-link" onclick="app.showSection('events')">Evenimente</a>
-                    <a class="nav-link" id="nav-top10-link" onclick="app.showSection('top10')"
+                    <a class="nav-link" id="nav-events-link" href="#events" onclick="app.showSection('events'); return false;">Evenimente</a>
+                    <a class="nav-link" id="nav-top10-link" href="#top10" onclick="app.showSection('top10'); return false;"
                         style="display: none;">Top 10 Lunar</a>
                 </div>
                 <div style="display: flex; align-items: center; gap: 1.5rem;">
@@ -857,7 +860,13 @@
     <script src="/js/events.js?v=5" defer></script>
     <script src="/js/reports.js?v=5" defer></script>
     <script src="/js/tv.js?v=5" defer></script>
-<div style="position: fixed; bottom: 10px; right: 10px; color: rgba(255,255,255,0.3); font-size: 0.7rem; z-index: 9999;">v7</div>
+<footer style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 0.5rem 2rem; display: flex; justify-content: center; gap: 2rem; background: rgba(15,23,42,0.9); border-top: 1px solid rgba(255,255,255,0.05); z-index: 50;">
+    <a href="/" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem;">Clasament</a>
+    <a href="/nou" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem;">Înregistrare</a>
+    <a href="/start" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem;">Autentificare</a>
+    <a href="/cod" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem;">Recuperare Cod</a>
+</footer>
+<div style="position: fixed; bottom: 10px; right: 10px; color: rgba(255,255,255,0.3); font-size: 0.7rem; z-index: 9999;">v8</div>
 </body>
 
 </html>
