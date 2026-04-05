@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1a"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0a0f1a"/>
+    </linearGradient>
+    <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00d2ff"/>
+      <stop offset="100%" stop-color="#3a7bd5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="600" y="260" font-family="Arial,sans-serif" font-weight="900" font-size="120" fill="url(#text-grad)" text-anchor="middle">FitGo.ro</text>
+  <text x="600" y="350" font-family="Arial,sans-serif" font-weight="600" font-size="36" fill="#94a3b8" text-anchor="middle">Clasament Sportivi &amp; Evaluare Fitness</text>
+  <text x="600" y="410" font-family="Arial,sans-serif" font-weight="400" font-size="24" fill="#64748b" text-anchor="middle">Flotări • Plank • Săritură • Forță • Rezistență</text>
+  <rect x="100" y="500" width="1000" height="4" rx="2" fill="#0ea5e9" opacity="0.3"/>
+</svg>
