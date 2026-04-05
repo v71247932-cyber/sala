@@ -302,6 +302,49 @@
         </div>
     </div>
 
+    <!-- Nou Screen (Public Signup) -->
+    <div id="nou-screen" class="hidden"
+        style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%);">
+        <div class="card" style="width: 100%; max-width: 400px; text-align: left;">
+            <div class="logo" style="font-size: 2.5rem; margin-bottom: 2rem; text-align: center;">Fit Go</div>
+            <h2 style="margin-bottom: 2rem; text-align: center;">Înscrie-te la FitGo</h2>
+            <form id="public-signup-form-nou">
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label>Prenume / Poreclă <span style="color: var(--primary);">*</span></label>
+                        <input type="text" id="pub-firstname-nou" required placeholder="Alex">
+                    </div>
+                    <div class="form-group">
+                        <label>Nume de Familie <span style="color: var(--text-muted); font-size: 0.8rem;">(opțional)</span></label>
+                        <input type="text" id="pub-lastname-nou" placeholder="Popescu">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="pub-email-nou" required>
+                </div>
+                <div class="grid-cols-2">
+                    <div class="form-group">
+                        <label>Data Nașterii</label>
+                        <input type="date" id="pub-dob-nou" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Parolă</label>
+                        <input type="password" id="pub-password-nou" required minlength="6">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Obiectiv Sportiv</label>
+                    <input type="text" id="pub-goal-nou" placeholder="Ex: Slăbire, Forță">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Creează Cont și Obține Codul</button>
+                <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.9rem; text-align: center;">
+                    Ai deja cont? <a href="/start" style="color: var(--primary); text-decoration: none;">Autentifică-te</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
     <!-- Start Screen (Quick ID Login) -->
     <div id="start-screen" class="section hidden"
         style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 50%, #0a0f1a 100%);">
@@ -756,12 +799,12 @@
 
     <script src="/js/storage.js" defer></script>
     <script src="/js/app.js" defer></script>
-    <script src="/js/registration.js?v=4" defer></script>
-    <script src="/js/dashboard.js?v=4" defer></script>
-    <script src="/js/events.js?v=4" defer></script>
-    <script src="/js/reports.js?v=4" defer></script>
-    <script src="/js/tv.js?v=4" defer></script>
-<div style="position: fixed; bottom: 10px; right: 10px; color: rgba(255,255,255,0.3); font-size: 0.7rem; z-index: 9999;">v3</div>
+    <script src="/js/registration.js?v=5" defer></script>
+    <script src="/js/dashboard.js?v=5" defer></script>
+    <script src="/js/events.js?v=5" defer></script>
+    <script src="/js/reports.js?v=5" defer></script>
+    <script src="/js/tv.js?v=5" defer></script>
+<div style="position: fixed; bottom: 10px; right: 10px; color: rgba(255,255,255,0.3); font-size: 0.7rem; z-index: 9999;">v4</div>
 </body>
 
 </html>

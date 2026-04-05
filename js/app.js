@@ -76,6 +76,7 @@ const app = {
     updateView() {
         const authScreen = document.getElementById('auth-screen');
         const startScreen = document.getElementById('start-screen');
+        const nouScreen = document.getElementById('nou-screen');
         const mainApp = document.getElementById('main-app');
         const tvScreen = document.getElementById('tv-screen');
         const codScreen = document.getElementById('cod-screen');
@@ -85,7 +86,7 @@ const app = {
         const navTodo = document.getElementById('nav-todo-link');
 
         // Reset visibility
-        [authScreen, startScreen, mainApp, tvScreen, codScreen].forEach(s => s?.classList.add('hidden'));
+        [authScreen, startScreen, nouScreen, mainApp, tvScreen, codScreen].forEach(s => s?.classList.add('hidden'));
 
         if (this.currentRoute === 'tv') {
             tvScreen?.classList.remove('hidden');
@@ -104,12 +105,7 @@ const app = {
         }
 
         if (this.currentRoute === 'nou') {
-            authScreen?.classList.remove('hidden');
-            // Always show public signup form, hide login — even if admin is logged in
-            document.getElementById('login-form')?.classList.add('hidden');
-            document.getElementById('signup-prompt')?.classList.remove('hidden');
-            // Make sure mainApp stays hidden
-            mainApp?.classList.add('hidden');
+            nouScreen?.classList.remove('hidden');
             return;
         }
 
