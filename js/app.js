@@ -104,10 +104,10 @@ const app = {
         }
 
         if (this.currentRoute === 'nou') {
-            mainApp?.classList.remove('hidden');
-            // Hide nav and show only registration
-            document.getElementById('main-nav')?.classList.add('hidden');
-            this.showSection('registration');
+            authScreen?.classList.remove('hidden');
+            // Show signup form directly, hide login
+            document.getElementById('login-form')?.classList.add('hidden');
+            document.getElementById('signup-prompt')?.classList.remove('hidden');
             return;
         }
 
