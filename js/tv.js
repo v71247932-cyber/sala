@@ -393,6 +393,17 @@ const tv = {
     _personalAthlete: null,
     _selectedPersonalAgeGroup: null,
 
+    handleAgeInput() {
+        const input = document.getElementById('tv-rank-age-input');
+        const age = parseInt(input.value);
+        if (!age || age < 1 || age > 99) return;
+        // Find matching age group
+        const group = this.ageGroups.find(g => g.key !== 'all' && age >= g.min && age <= g.max);
+        if (group) {
+            this.renderPersonalRanking(this._personalAthlete, group.key);
+        }
+    },
+
     renderPersonalRanking(athlete, selectedKey) {
         const container = document.getElementById('tv-personal-ranking');
         if (!container) return;
@@ -455,7 +466,13 @@ const tv = {
         container.innerHTML = `
             <div style="background: rgba(255,255,255,0.03); border-radius: 0.75rem; padding: 1rem;">
                 <h3 style="margin: 0 0 0.75rem 0; font-size: 1.1rem;"><i class="fas fa-trophy" style="color: var(--accent); margin-right: 0.5rem;"></i>Clasament pe Vârstă</h3>
-                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem;">${buttons}</div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.3rem 0.6rem;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">Scrie vârsta:</label>
+                        <input id="tv-rank-age-input" type="number" min="5" max="99" placeholder="${myAge}" style="width: 3.5rem; background: transparent; border: none; color: white; font-size: 1rem; font-weight: 700; text-align: center; outline: none;" oninput="tv.handleAgeInput()">
+                    </div>
+                    ${buttons}
+                </div>
                 <div style="text-align: center; padding: 0.75rem; background: rgba(14,165,233,0.1); border-radius: 0.75rem; margin-bottom: 0.75rem; border: 2px solid var(--primary);">
                     <div style="font-size: 0.8rem; color: var(--text-muted);">Locul tău în ${selectedGroup.label}${notInGroupLabel}</div>
                     <div style="font-size: 2.2rem; font-weight: 900; color: var(--primary);">${myRank + 1}</div>
