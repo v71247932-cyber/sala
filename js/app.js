@@ -64,8 +64,9 @@ const app = {
             console.log('App initialized and view updated');
         });
 
-        // For start/nou/tv routes, don't block on server sync — show immediately
-        if (this.currentRoute !== 'main') {
+        // For start/tv/cod routes, don't block on server sync — show immediately
+        // /nou requires admin check, so it must wait for sync
+        if (this.currentRoute !== 'main' && this.currentRoute !== 'nou') {
             this.updateView();
             const loader = document.getElementById('loading-screen');
             if (loader) loader.style.display = 'none';
@@ -108,8 +109,8 @@ const app = {
             if (this.isLoggedIn && this.isAdmin) {
                 nouScreen?.classList.remove('hidden');
             } else {
-                // Not admin — redirect to home
-                window.location.href = '/';
+                // Not admin — show login screen
+                authScreen?.classList.remove('hidden');
             }
             return;
         }
