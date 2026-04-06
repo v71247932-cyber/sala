@@ -105,7 +105,12 @@ const app = {
         }
 
         if (this.currentRoute === 'nou') {
-            nouScreen?.classList.remove('hidden');
+            if (this.isLoggedIn && this.isAdmin) {
+                nouScreen?.classList.remove('hidden');
+            } else {
+                // Not admin — redirect to home
+                window.location.href = '/';
+            }
             return;
         }
 
