@@ -414,8 +414,16 @@ const tv = {
         // Sort by total points descending
         groupAthletes.sort((a, b) => this.calcTotal(b) - this.calcTotal(a));
 
-        const myRank = groupAthletes.findIndex(a => a.id === athlete.id);
-        const isInGroup = myRank >= 0;
+        const isInGroup = groupAthletes.some(a => a.id === athlete.id);
+        const myPoints = this.calcTotal(athlete);
+
+        // Calculate rank: insert athlete virtually if not in group
+        let rankList = [...groupAthletes];
+        if (!isInGroup) {
+            rankList.push(athlete);
+            rankList.sort((a, b) => this.calcTotal(b) - this.calcTotal(a));
+        }
+        const myRank = rankList.findIndex(a => a.id === athlete.id);
 
         // Age group buttons (exclude 'all')
         const buttons = this.ageGroups.filter(g => g.key !== 'all').map(g => {
@@ -430,7 +438,7 @@ const tv = {
             ">${g.label}${isMyGroup ? ' ★' : ''}</button>`;
         }).join('');
 
-        // Top 5
+        // Top 5 from group + always show athlete
         const top5 = groupAthletes.slice(0, 5).map((a, i) => {
             const isMe = a.id === athlete.id;
             const medals = ['🥇', '🥈', '🥉'];
@@ -442,22 +450,17 @@ const tv = {
             </div>`;
         }).join('');
 
+        const notInGroupLabel = !isInGroup ? ` (vârsta ta: ${myAge} ani)` : '';
+
         container.innerHTML = `
             <div style="background: rgba(255,255,255,0.03); border-radius: 0.75rem; padding: 1rem;">
                 <h3 style="margin: 0 0 0.75rem 0; font-size: 1.1rem;"><i class="fas fa-trophy" style="color: var(--accent); margin-right: 0.5rem;"></i>Clasament pe Vârstă</h3>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem;">${buttons}</div>
-                ${isInGroup ? `
-                    <div style="text-align: center; padding: 0.75rem; background: rgba(14,165,233,0.1); border-radius: 0.75rem; margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Locul tău în ${selectedGroup.label}</div>
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--primary);">${myRank + 1}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">din ${groupAthletes.length} sportivi • ${this.calcTotal(athlete)} puncte</div>
-                    </div>
-                ` : `
-                    <div style="text-align: center; padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 0.75rem; margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Nu ești în grupa ${selectedGroup.label}</div>
-                        ${myGroup ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Grupa ta: ${myGroup.label} (${myAge} ani)</div>` : ''}
-                    </div>
-                `}
+                <div style="text-align: center; padding: 0.75rem; background: rgba(14,165,233,0.1); border-radius: 0.75rem; margin-bottom: 0.75rem; border: 2px solid var(--primary);">
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Locul tău în ${selectedGroup.label}${notInGroupLabel}</div>
+                    <div style="font-size: 2.2rem; font-weight: 900; color: var(--primary);">${myRank + 1}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">din ${isInGroup ? groupAthletes.length : groupAthletes.length + 1} sportivi • ${myPoints} puncte</div>
+                </div>
                 ${groupAthletes.length > 0 ? `
                     <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600;">Top 5 — ${selectedGroup.label}</div>
                     <div style="display: flex; flex-direction: column; gap: 0.2rem;">${top5}</div>
