@@ -390,11 +390,92 @@ const tv = {
         this.showPersonal(athlete);
     },
 
+    _personalAthlete: null,
+    _selectedPersonalAgeGroup: null,
+
+    renderPersonalRanking(athlete, selectedKey) {
+        const container = document.getElementById('tv-personal-ranking');
+        if (!container) return;
+
+        const myAge = this.calculateAge(athlete.dob);
+        const myGroup = this.ageGroups.find(g => g.key !== 'all' && myAge >= g.min && myAge <= g.max);
+        if (!selectedKey) selectedKey = this._selectedPersonalAgeGroup || (myGroup ? myGroup.key : '6-12');
+        this._selectedPersonalAgeGroup = selectedKey;
+
+        const selectedGroup = this.ageGroups.find(g => g.key === selectedKey);
+        if (!selectedGroup || selectedKey === 'all') return;
+
+        // Filter athletes in selected age group
+        const groupAthletes = this.athletes.filter(a => {
+            const age = this.calculateAge(a.dob);
+            return age !== null && age >= selectedGroup.min && age <= selectedGroup.max;
+        });
+
+        // Sort by total points descending
+        groupAthletes.sort((a, b) => this.calcTotal(b) - this.calcTotal(a));
+
+        const myRank = groupAthletes.findIndex(a => a.id === athlete.id);
+        const isInGroup = myRank >= 0;
+
+        // Age group buttons (exclude 'all')
+        const buttons = this.ageGroups.filter(g => g.key !== 'all').map(g => {
+            const isActive = g.key === selectedKey;
+            const isMyGroup = myGroup && g.key === myGroup.key;
+            return `<button onclick="tv.renderPersonalRanking(tv._personalAthlete,'${g.key}')" style="
+                padding: 0.4rem 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; cursor: pointer;
+                border: 1px solid ${isActive ? 'var(--primary)' : 'var(--border)'};
+                background: ${isActive ? 'var(--primary)' : 'transparent'};
+                color: ${isActive ? 'white' : 'var(--text-muted)'};
+                font-weight: ${isActive ? '700' : '400'};
+            ">${g.label}${isMyGroup ? ' ★' : ''}</button>`;
+        }).join('');
+
+        // Top 5
+        const top5 = groupAthletes.slice(0, 5).map((a, i) => {
+            const isMe = a.id === athlete.id;
+            const medals = ['🥇', '🥈', '🥉'];
+            const prefix = i < 3 ? medals[i] : `${i + 1}.`;
+            const name = a.name.split(' ')[0] + (a.name.split(' ').length > 1 ? ' ' + a.name.split(' ').slice(-1)[0][0] + '.' : '');
+            return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.75rem; border-radius: 0.5rem; ${isMe ? 'background: rgba(14,165,233,0.15); border: 1px solid var(--primary);' : ''}">
+                <span style="font-weight: ${isMe ? '700' : '400'}; ${isMe ? 'color: var(--primary);' : ''}">${prefix} ${name}</span>
+                <span style="font-weight: 600; color: var(--accent);">${this.calcTotal(a)} p</span>
+            </div>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div style="background: rgba(255,255,255,0.03); border-radius: 0.75rem; padding: 1rem;">
+                <h3 style="margin: 0 0 0.75rem 0; font-size: 1.1rem;"><i class="fas fa-trophy" style="color: var(--accent); margin-right: 0.5rem;"></i>Clasament pe Vârstă</h3>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem;">${buttons}</div>
+                ${isInGroup ? `
+                    <div style="text-align: center; padding: 0.75rem; background: rgba(14,165,233,0.1); border-radius: 0.75rem; margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Locul tău în ${selectedGroup.label}</div>
+                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--primary);">${myRank + 1}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">din ${groupAthletes.length} sportivi • ${this.calcTotal(athlete)} puncte</div>
+                    </div>
+                ` : `
+                    <div style="text-align: center; padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 0.75rem; margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Nu ești în grupa ${selectedGroup.label}</div>
+                        ${myGroup ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Grupa ta: ${myGroup.label} (${myAge} ani)</div>` : ''}
+                    </div>
+                `}
+                ${groupAthletes.length > 0 ? `
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600;">Top 5 — ${selectedGroup.label}</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.2rem;">${top5}</div>
+                ` : '<div style="text-align: center; color: var(--text-muted); padding: 0.5rem;">Niciun sportiv în această grupă.</div>'}
+            </div>
+        `;
+    },
+
     showPersonal(athlete) {
         if (this.interval) clearInterval(this.interval);
+        this._personalAthlete = athlete;
+        this._selectedPersonalAgeGroup = null;
         document.getElementById('tv-personal').classList.remove('hidden');
 
         document.getElementById('tv-personal-name').textContent = `Istoric: ${athlete.name}`;
+
+        // Render age group ranking
+        this.renderPersonalRanking(athlete);
 
         // Charts
         this.personalCharts.forEach(c => c.destroy());
