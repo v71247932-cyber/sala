@@ -12,16 +12,116 @@ const dashboard = {
         return age;
     },
 
+    ageGroups: [
+        { key: '6-12', label: '6-12 ani', min: 6, max: 12 },
+        { key: '13-17', label: '13-17 ani', min: 13, max: 17 },
+        { key: '18-30', label: '18-30 ani', min: 18, max: 30 },
+        { key: '31-45', label: '31-45 ani', min: 31, max: 45 },
+        { key: '46+', label: '46+ ani', min: 46, max: 999 }
+    ],
+
+    getAthleteAgeGroup(athlete) {
+        const age = this.calculateAge(athlete.dob);
+        if (age === null) return null;
+        return this.ageGroups.find(g => age >= g.min && age <= g.max) || null;
+    },
+
+    renderPersonalRanking(athlete) {
+        let container = document.getElementById('personal-ranking');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'personal-ranking';
+            const dashSection = document.getElementById('dashboard');
+            dashSection.insertBefore(container, dashSection.querySelector('.card'));
+        }
+
+        const allAthletes = storage.getAthletes();
+        const myAge = this.calculateAge(athlete.dob);
+        const myGroup = this.getAthleteAgeGroup(athlete);
+        const myPoints = this.calculateTotalPoints(athlete);
+
+        // Build ranking for selected age group (default: athlete's own group)
+        const selectedKey = this._selectedAgeGroup || (myGroup ? myGroup.key : '6-12');
+        const selectedGroup = this.ageGroups.find(g => g.key === selectedKey);
+
+        // Filter athletes in selected age group
+        const groupAthletes = allAthletes.filter(a => {
+            const age = this.calculateAge(a.dob);
+            return age !== null && age >= selectedGroup.min && age <= selectedGroup.max;
+        });
+
+        // Sort by total points descending
+        groupAthletes.sort((a, b) => this.calculateTotalPoints(b) - this.calculateTotalPoints(a));
+
+        // Find my rank in this group
+        const myRankInGroup = groupAthletes.findIndex(a => a.id === athlete.id);
+        const isInGroup = myRankInGroup >= 0;
+        const rankDisplay = isInGroup ? `${myRankInGroup + 1} / ${groupAthletes.length}` : '—';
+
+        // Age group buttons
+        const groupButtons = this.ageGroups.map(g => {
+            const isActive = g.key === selectedKey;
+            const isMyGroup = myGroup && g.key === myGroup.key;
+            return `<button onclick="dashboard._selectedAgeGroup='${g.key}';dashboard.render()" style="
+                padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-size: 0.8rem; cursor: pointer; border: 1px solid ${isActive ? 'var(--primary)' : 'var(--border)'};
+                background: ${isActive ? 'var(--primary)' : 'transparent'}; color: ${isActive ? 'white' : 'var(--text-muted)'};
+                font-weight: ${isActive ? '700' : '400'};
+            ">${g.label}${isMyGroup ? ' ⭐' : ''}</button>`;
+        }).join('');
+
+        // Top 5 in selected group
+        const top5 = groupAthletes.slice(0, 5).map((a, i) => {
+            const isMe = a.id === athlete.id;
+            const medals = ['🥇', '🥈', '🥉'];
+            const prefix = i < 3 ? medals[i] : `${i + 1}.`;
+            return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-radius: 0.5rem; ${isMe ? 'background: rgba(14,165,233,0.15); border: 1px solid var(--primary);' : ''}">
+                <span style="font-weight: ${isMe ? '700' : '400'}; ${isMe ? 'color: var(--primary);' : ''}">${prefix} ${a.name.split(' ')[0]}${a.name.split(' ').length > 1 ? ' ' + a.name.split(' ').slice(-1)[0][0] + '.' : ''}</span>
+                <span style="font-weight: 600; color: var(--accent);">${this.calculateTotalPoints(a)} p</span>
+            </div>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <h2 style="margin-bottom: 0.75rem;"><i class="fas fa-trophy" style="color: var(--accent); margin-right: 0.5rem;"></i>Clasament pe Grupe de Vârstă</h2>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">${groupButtons}</div>
+                ${isInGroup ? `
+                    <div style="text-align: center; padding: 1rem; background: rgba(14,165,233,0.1); border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Locul tău în ${selectedGroup.label}</div>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">${myRankInGroup + 1}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">din ${groupAthletes.length} sportivi • ${myPoints} puncte</div>
+                    </div>
+                ` : `
+                    <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Nu ești în grupa ${selectedGroup.label}</div>
+                        ${myGroup ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Grupa ta: ${myGroup.label} (${myAge} ani)</div>` : ''}
+                    </div>
+                `}
+                ${groupAthletes.length > 0 ? `
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600;">Top 5 — ${selectedGroup.label}</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">${top5}</div>
+                ` : '<div style="text-align: center; color: var(--text-muted); padding: 1rem;">Niciun sportiv în această grupă.</div>'}
+            </div>
+        `;
+    },
+
     render() {
         // Auto-fix sportivi fără DOB valid (vârstă 5-90)
         this.fixInvalidDobs();
 
         const listContainer = document.getElementById('athletes-list');
         let athletes = storage.getAthletes();
-        
+
         // Filter based on user role
         if (app.isLoggedIn && !app.isAdmin) {
             athletes = athletes.filter(a => a.email === app.currentUser.email);
+            // Show personal ranking widget
+            if (athletes.length > 0) {
+                this.renderPersonalRanking(athletes[0]);
+            }
+        } else {
+            // Remove ranking widget for admin
+            const rankEl = document.getElementById('personal-ranking');
+            if (rankEl) rankEl.remove();
         }
 
         if (athletes.length === 0) {
